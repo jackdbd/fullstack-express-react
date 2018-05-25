@@ -19,13 +19,12 @@ async function readUserFromDB(username) {
 }
 
 const someUser = {
-  'username': 'some-username',
-  'email': 'some-email@some-provider.com',
-  'password': 'some-password'
-}
+  username: "some-username",
+  email: "some-email@some-provider.com",
+  password: "some-password"
+};
 
 async function run() {
-
   // CREATE
   try {
     const user_doc = await saveUserInDB(someUser);

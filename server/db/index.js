@@ -5,4 +5,4 @@ const mongoose = require("mongoose");
 // need to use await or .then(), since mongoose takes care of it automatically.
 mongoose.connect(process.env.MONGODB_URI);
 
-module.exports = mongoose
+module.exports = mongoose;
