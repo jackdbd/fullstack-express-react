@@ -1,1 +1,2 @@
 # Fullstack Express React
+[![Build Status](https://travis-ci.org/jackdbd/fullstack-express-react.svg?branch=master)](https://travis-ci.org/jackdbd/fullstack-express-react) [![Greenkeeper badge](https://badges.greenkeeper.io/jackdbd/fullstack-express-react.svg)](https://greenkeeper.io/) [![codecov](https://codecov.io/gh/jackdbd/fullstack-express-react/branch/master/graph/badge.svg)](https://codecov.io/gh/jackdbd/fullstack-express-react)
