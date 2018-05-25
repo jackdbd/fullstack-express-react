@@ -1,5 +1,4 @@
-require("dotenv").load();
-const mongoose = require("mongoose");
+const mongoose = require("../server/db");
 const dummy = require("mongoose-dummy");
 const { User } = require("../server/models");
 
@@ -27,14 +26,10 @@ function* fakeUsersGenerator(n) {
 }
 
 async function run() {
-  // no need to await on this, mongoose handles connection buffering
-  mongoose.connect(process.env.MONGODB_URI);
-
   for (let user of fakeUsersGenerator(20)) {
     const user_doc = await saveUserInDB(user);
     console.log(`CREATE user: ${user_doc}`);
   }
-
   // no need to await on this, mongoose handles connection buffering
   mongoose.connection.close();
 }

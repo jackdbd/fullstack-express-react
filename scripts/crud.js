@@ -1,40 +1,43 @@
-require("dotenv").load();
-const mongoose = require("mongoose");
+const mongoose = require("../server/db");
 const { User } = require("../server/models");
 
-async function saveUserInDB(name) {
+async function saveUserInDB(user) {
   try {
-    const user = await new User({ name: name }).save();
-    return user;
+    const user_doc = await new User(user).save();
+    return user_doc;
   } catch (err) {
     throw err;
   }
 }
 
-async function readUserFromDB(name) {
+async function readUserFromDB(username) {
   try {
-    return User.findOne({ name: name });
+    return User.findOne({ username: username });
   } catch (err) {
     throw err;
   }
+}
+
+const someUser = {
+  'username': 'some-username',
+  'email': 'some-email@some-provider.com',
+  'password': 'some-password'
 }
 
 async function run() {
-  // no need to await on this, mongoose handles connection buffering
-  mongoose.connect(process.env.MONGODB_URI);
 
   // CREATE
   try {
-    const user = await saveUserInDB("giacomo");
-    console.log(`CREATE user: ${user}`);
+    const user_doc = await saveUserInDB(someUser);
+    console.log(`CREATE user: ${user_doc}`);
   } catch (err) {
     throw err;
   }
 
   // READ
   try {
-    const user = await readUserFromDB("giacomo");
-    console.log(`READ user: ${user}`);
+    const user_doc = await readUserFromDB(someUser.username);
+    console.log(`READ user: ${user_doc}`);
   } catch (err) {
     throw err;
   }
