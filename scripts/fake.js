@@ -1,18 +1,9 @@
 require("dotenv").load();
 const mongoose = require("mongoose");
 const dummy = require("mongoose-dummy");
+const { User } = require("../server/models");
 
 // TODO: use yargs to make a CLI?
-
-const userSchema = new mongoose.Schema({
-  name: String,
-  created_at: {
-    type: Date,
-    default: Date.now
-  }
-});
-
-const User = mongoose.model("users", userSchema);
 
 async function saveUserInDB(user) {
   try {

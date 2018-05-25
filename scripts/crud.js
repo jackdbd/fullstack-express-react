@@ -1,11 +1,6 @@
 require("dotenv").load();
 const mongoose = require("mongoose");
-
-const userSchema = new mongoose.Schema({
-  name: String
-});
-
-const User = mongoose.model("users", userSchema);
+const { User } = require("../server/models");
 
 async function saveUserInDB(name) {
   try {
