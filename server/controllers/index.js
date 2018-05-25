@@ -1,4 +1,5 @@
 const { User } = require("../models");
+const HttpStatus = require("http-status-codes");
 
 exports.signup_post = async function(req, res) {
   res.send({ TODO: "Sign​ ​up​ ​to​ ​the​ ​system​ ​(username,​ ​password)" });
@@ -19,14 +20,12 @@ exports.me_get = async function(req, res) {
     // user = await User.findOne({ _id: someNonExistingUserId });
     // user = await User.findOne({ _id: someInvalidId });
   } catch (err) {
-    // TODO: how to handle mongoose CastError when the id is invalid?
-    console.log(err);
-    throw err;
+    res.status(HttpStatus.BAD_REQUEST).json({ error: err });
   }
   if (user) {
     res.json(user);
   } else {
-    res.status(404).json({ error: "User not found!" });
+    res.status(HttpStatus.NOT_FOUND).json({ error: "User not found!" });
   }
 };
 
