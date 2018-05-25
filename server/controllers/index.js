@@ -45,7 +45,8 @@ exports.user_id_like_get = async function(req, res) {
 };
 
 exports.most_liked_get = async function(req, res) {
-  res.send({
-    TODO: "List​ ​users​ ​in​ ​a​ ​most​ ​liked​ ​to​ ​least​ ​liked"
+  const docs = await User.find({}, ["username", "numLikes"], {
+    sort: { numLikes: -1 }
   });
+  res.json(docs.map(d => ({ username: d.username, numLikes: d.numLikes })));
 };
