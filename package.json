@@ -12,7 +12,8 @@
     "crud": "node scripts/crud.js",
     "fake": "node scripts/fake.js",
     "test": "jest --detectOpenHandles --coverage",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "ci": "jest --coverage"
   },
   "jest": {
     "coverageDirectory": "./coverage/",
