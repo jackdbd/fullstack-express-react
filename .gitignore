@@ -1,0 +1,18 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Coverage directory used by tools like istanbul
+coverage
+
+# dotenv environment variables file
+.env
+
+node_modules/
+
+# build directories
+build/
+dist/

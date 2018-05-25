@@ -1,0 +1,8 @@
+{
+  "name": "fullstack-express-react",
+  "version": "1.0.0",
+  "description": "Express API server",
+  "main": "server/index.js",
+  "author": "jackdbd <jackdebidda@gmail.com>",
+  "license": "MIT"
+}
