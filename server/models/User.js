@@ -18,6 +18,10 @@ const schema = new mongoose.Schema({
     required: true,
     unique: true
   },
+  numLikes: {
+    type: Number,
+    default: 0
+  },
   created_at: {
     type: Date,
     default: Date.now
