@@ -1,12 +1,31 @@
 require("dotenv").load();
 const express = require("express");
+const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
-const { apiRoutes } = require("./routes");
+const cookieParser = require("cookie-parser");
+// const cookieSession = require("cookie-session");
+const session = require("express-session");
+const passport = require("passport");
+const { clearRoutes, authRoutes } = require("./routes");
 
 const app = express();
 
-app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use("/api", apiRoutes);
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
+
+app.use(
+  session({
+    secret: "secret",
+    saveUninitialized: true,
+    resave: true
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use("/", clearRoutes);
+app.use("/", authRoutes);
 
 module.exports = app;

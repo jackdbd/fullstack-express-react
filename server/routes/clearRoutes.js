@@ -1,14 +1,13 @@
 const express = require("express");
+// const { passport, authOrRedirect } = require("../middlewares");
 const controllers = require("../controllers");
 
 const router = express.Router();
 
+router.get("/signup", controllers.signup_get);
 router.post("/signup", controllers.signup_post);
+router.get("/login", controllers.login_get);
 router.post("/login", controllers.login_post);
-router.get("/me", controllers.me_get);
-router.put("/me/update-password", controllers.me_update_password_put);
-router.get("/user/:id/", controllers.user_id_get);
-router.get("/user/:id/like", controllers.user_id_like_get);
 router.get("/most-liked", controllers.most_liked_get);
 
 module.exports = router;

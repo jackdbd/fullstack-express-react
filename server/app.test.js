@@ -1,24 +1,30 @@
+require("dotenv").load();
 const request = require("supertest");
 const HttpStatus = require("http-status-codes");
-const mongoose = require("./db");
+const mongoose = require("mongoose");
 const app = require("./app");
+
+beforeAll(() => {
+  console.log("Start test suite. Connect to MongoDB");
+  mongoose.connect(process.env.MONGODB_URI);
+});
 
 afterAll(() => {
   console.log("All tests done. Disconnect from MongoDB");
   mongoose.disconnect();
 });
 
-// TODO: mock /api/me with missing/invalid id to test 404 and 400?
-describe("GET /api/me - Get​ ​the​ ​currently​ ​logged​ ​in​ ​user​ ​information", () => {
+describe("GET /me - Get​ ​the​ ​currently​ ​logged​ ​in​ ​user​ ​information", () => {
+  const endpoint = "/me";
   it("should return HTTP OK (200)", done => {
     request(app)
-      .get("/api/me")
+      .get(endpoint)
       .expect("Content-Type", /json/)
       .expect(HttpStatus.OK, done);
   });
   it("should contain", done => {
     request(app)
-      .get("/api/me")
+      .get(endpoint)
       .expect("Content-Type", /json/)
       .then(res => {
         expect(res.body).toMatchObject({
@@ -30,16 +36,17 @@ describe("GET /api/me - Get​ ​the​ ​currently​ ​logged​ ​in​ �
   });
 });
 
-describe("GET /api/most-liked - List​ ​users​ ​in​ ​a​ ​most​ ​liked​ ​to​ ​least​ ​liked", () => {
+describe("GET /most-liked - List​ ​users​ ​in​ ​a​ ​most​ ​liked​ ​to​ ​least​ ​liked", () => {
+  const endpoint = "/most-liked";
   it("should return HTTP OK (200)", done => {
     request(app)
-      .get("/api/most-liked")
+      .get(endpoint)
       .expect("Content-Type", /json/)
       .expect(HttpStatus.OK, done);
   });
   it("should return a list of objects, sorted by numLikes", done => {
     request(app)
-      .get("/api/most-liked")
+      .get(endpoint)
       .expect("Content-Type", /json/)
       .then(res => {
         const results = res.body;

@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const dummy = require("mongoose-dummy");
 
 const collection = "users";
-const schema = new mongoose.Schema({
+const UserSchema = new mongoose.Schema({
   _id: { type: mongoose.Schema.ObjectId, auto: true },
   username: {
     type: String,
@@ -31,7 +31,7 @@ const schema = new mongoose.Schema({
   }
 });
 
-schema.pre("save", function(next) {
+UserSchema.pre("save", function(next) {
   const doc = this;
   const rounds = 10;
   bcrypt.genSalt(rounds, (err, salt) => {
@@ -44,11 +44,16 @@ schema.pre("save", function(next) {
   });
 });
 
-const model = mongoose.model(collection, schema);
+UserSchema.methods.generateAuthToken = function() {
+  const user = this;
+  console.log("TODO: AUTH TOKEN");
+};
+
+const User = mongoose.model(collection, UserSchema);
 
 async function createUser(obj) {
   try {
-    const doc = await new model(obj).save();
+    const doc = await new User(obj).save();
     return doc;
   } catch (err) {
     throw err;
@@ -57,34 +62,62 @@ async function createUser(obj) {
 
 async function readUser(id) {
   try {
-    return await model.findOne({ _id: id });
+    return await User.findOne({ _id: id });
   } catch (err) {
     throw err;
   }
 }
 
 async function updateUser(id, obj) {
-  const doc = await model.findById(id);
+  const doc = await User.findById(id);
   if (!doc) return false;
   // I tried to use findByIdAndUpdate but I couldn't understand how to trigger
   // "save" to hash the password
-  await model.findByIdAndRemove({ _id: doc._id });
+  await User.findByIdAndRemove({ _id: doc._id });
   const newObj = Object.assign({ _id: doc._id }, obj);
   return await createUser(newObj);
 }
 
 async function deleteUser(id) {
   try {
-    await model.findByIdAndRemove({ _id: id });
+    await User.findByIdAndRemove({ _id: id });
   } catch (err) {
     throw err;
   }
 }
 
+///////////////
+module.exports.createUserB = function(newUser, callback) {
+  bcrypt.genSalt(10, function(err, salt) {
+    bcrypt.hash(newUser.password, salt, function(err, hash) {
+      newUser.password = hash;
+      newUser.save(callback);
+    });
+  });
+};
+
+function getUserByUsername(username, callback) {
+  const query = { username: username };
+  User.findOne(query, callback);
+}
+
+module.exports.getUserById = function(id, callback) {
+  console.log("getUserById");
+  User.findById(id, callback);
+};
+
+module.exports.comparePassword = function(candidatePassword, hash, callback) {
+  bcrypt.compare(candidatePassword, hash, function(err, isMatch) {
+    if (err) throw err;
+    callback(null, isMatch);
+  });
+};
+///////////////
+
 function* fakeUsersGenerator(numFakes) {
   let i = 0;
   while (i < numFakes) {
-    const fakeObj = dummy(model, {
+    const fakeObj = dummy(User, {
       ignore: ["_id", "created_at", "__v"],
       returnDate: true
     });
@@ -94,10 +127,11 @@ function* fakeUsersGenerator(numFakes) {
 }
 
 module.exports = {
-  User: model,
+  User,
   createUser,
   readUser,
   updateUser,
   deleteUser,
+  getUserByUsername,
   fakeUsersGenerator
 };

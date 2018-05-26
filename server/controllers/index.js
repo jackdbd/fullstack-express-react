@@ -1,15 +1,25 @@
 const { User } = require("../models/user");
 const HttpStatus = require("http-status-codes");
 
-// TODO: import only the CRUD functions from the model (e.g. createUser),
-// don't use mongoose code here.
+exports.index_get = async function(req, res) {
+  res.json({ TODO: "GET / (React frotend)" });
+};
+
+exports.signup_get = async function(req, res) {
+  res.send({ TODO: "GET /signup" });
+};
 
 exports.signup_post = async function(req, res) {
-  res.send({ TODO: "Sign​ ​up​ ​to​ ​the​ ​system​ ​(username,​ ​password)" });
+  res.send({ TODO: "POST /signup" });
+};
+
+exports.login_get = async function(req, res) {
+  res.send({ TODO: "GET /login" });
 };
 
 exports.login_post = async function(req, res) {
-  res.send({ TODO: "Logs​ ​in​ ​an​ ​existing​ ​user​ ​with​ ​a​ ​password" });
+  console.log("AUTHETICATED?", req.isAuthenticated());
+  res.send({ TODO: "POST /login" });
 };
 
 exports.me_get = async function(req, res) {
@@ -33,17 +43,19 @@ exports.me_get = async function(req, res) {
 };
 
 exports.me_update_password_put = async function(req, res) {
-  res.send({ TODO: "AUTH Update​ ​the​ ​current​ ​user's​ ​password" });
+  res.send({ TODO: "PUT (or PATCH) /me/update-password" });
 };
 
 exports.user_id_get = async function(req, res) {
-  res.send({
-    TODO: "List​ ​username​ ​&​ ​number​ ​of​ ​likes​ ​of​ ​a​ ​user"
-  });
+  res.send({ TODO: "GET /user/:id" });
 };
 
-exports.user_id_like_get = async function(req, res) {
-  res.send({ TODO: "AUTH Like a user" });
+exports.user_id_like_post = async function(req, res) {
+  res.send({ TODO: "POST /user/:id/like" });
+};
+
+exports.user_id_unlike_post = async function(req, res) {
+  res.send({ TODO: "POST /user/:id/unlike" });
 };
 
 /**
