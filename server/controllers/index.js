@@ -1,5 +1,8 @@
-const { User } = require("../models");
+const { User } = require("../models/user");
 const HttpStatus = require("http-status-codes");
+
+// TODO: import only the CRUD functions from the model (e.g. createUser),
+// don't use mongoose code here.
 
 exports.signup_post = async function(req, res) {
   res.send({ TODO: "Sign​ ​up​ ​to​ ​the​ ​system​ ​(username,​ ​password)" });
@@ -43,6 +46,12 @@ exports.user_id_like_get = async function(req, res) {
   res.send({ TODO: "AUTH Like a user" });
 };
 
+/**
+ *
+ *
+ * @param {any} req
+ * @param {any} res
+ */
 exports.most_liked_get = async function(req, res) {
   const docs = await User.find({}, ["username", "numLikes"], {
     sort: { numLikes: -1 }

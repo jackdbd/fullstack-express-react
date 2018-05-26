@@ -1,49 +1,36 @@
 const mongoose = require("../server/db");
-const { User } = require("../server/models");
-
-async function saveUserInDB(user) {
-  try {
-    const user_doc = await new User(user).save();
-    return user_doc;
-  } catch (err) {
-    throw err;
-  }
-}
-
-async function readUserFromDB(username) {
-  try {
-    return User.findOne({ username: username });
-  } catch (err) {
-    throw err;
-  }
-}
-
-const someUser = {
-  username: "some-username",
-  email: "some-email@some-provider.com",
-  password: "some-password"
-};
+const {
+  createUser,
+  readUser,
+  updateUser,
+  deleteUser
+} = require("../server/models/user");
 
 async function run() {
-  // CREATE
-  try {
-    const user_doc = await saveUserInDB(someUser);
-    console.log(`CREATE user: ${user_doc}`);
-  } catch (err) {
-    throw err;
-  }
+  const obj = {
+    username: "some-username",
+    email: "some-email@some-provider.com",
+    password: "some-password"
+  };
+  console.log("Object from the frontend", obj);
 
-  // READ
-  try {
-    const user_doc = await readUserFromDB(someUser.username);
-    console.log(`READ user: ${user_doc}`);
-  } catch (err) {
-    throw err;
-  }
+  const docCreated = await createUser(obj);
+  console.log("CREATE", docCreated);
 
-  // UPDATE (TODO)
+  const id = docCreated._id;
+  const docRead = await readUser(id);
+  console.log(`READ ${id}`, docRead);
 
-  // DELETE (TODO)
+  const newObj = {
+    username: "updated-username",
+    email: "some-email@some-provider.com",
+    password: "updated-password"
+  };
+  const docUpdated = await updateUser(id, newObj);
+  console.log(`UPDATE ${id}`, docUpdated);
+
+  console.log(`DELETE ${id}`);
+  await deleteUser(id);
 
   // no need to await on this, mongoose handles connection buffering
   mongoose.connection.close();
