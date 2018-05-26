@@ -6,6 +6,7 @@ const cookieParser = require("cookie-parser");
 // const cookieSession = require("cookie-session");
 const session = require("express-session");
 const passport = require("passport");
+const logger = require("morgan");
 const { clearRoutes, authRoutes } = require("./routes");
 
 const app = express();
@@ -21,6 +22,8 @@ app.use(
     resave: true
   })
 );
+
+app.use(logger("dev"));
 
 app.use(passport.initialize());
 app.use(passport.session());

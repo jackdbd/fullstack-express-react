@@ -1,5 +1,4 @@
 const express = require("express");
-// const { passport, authOrRedirect } = require("../middlewares");
 const controllers = require("../controllers");
 
 const router = express.Router();
