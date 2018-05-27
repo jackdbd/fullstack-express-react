@@ -5,6 +5,9 @@
   "main": "server/index.js",
   "author": "jackdbd <jackdebidda@gmail.com>",
   "license": "MIT",
+  "engines": {
+    "node": "8.1.4"
+  },
   "scripts": {
     "start": "node server/index.js",
     "dev": "nodemon --exec 'npm run start'",
