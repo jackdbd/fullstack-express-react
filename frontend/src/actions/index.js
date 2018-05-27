@@ -2,7 +2,6 @@ import axios from "axios";
 
 export const FETCH_USERS = "fetch users from a remote mongo db database";
 
-
 /* 
   What is the best way to connect the React frontend with the Express backend in
   a development environment? I think there are several possibilities:
