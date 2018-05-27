@@ -80,36 +80,27 @@ async function updateUser(id, obj) {
 
 async function deleteUser(id) {
   try {
-    await User.findByIdAndRemove({ _id: id });
+    const doc = await User.findByIdAndRemove({ _id: id });
+    return doc;
   } catch (err) {
     throw err;
   }
 }
 
-// function getUserByUsername(username, callback) {
-//   const query = { username: username };
-//   User.findOne(query, callback);
-// }
-
-async function getUserById(id){
+async function getUserById(id) {
   // if (!mongoose.Types.ObjectId.isValid(id)) throw new Error()
-  let user
+  let user;
   try {
     user = await User.findOne({ _id: id });
   } catch (err) {
     throw err;
   }
   if (user) {
-    return user
+    return user;
   } else {
-    return false
+    return false;
   }
 }
-
-// function getUserById (id, callback) {
-//   console.log("getUserById");
-//   User.findById(id, callback);
-// };
 
 // module.exports.comparePassword = function(candidatePassword, hash, callback) {
 //   bcrypt.compare(candidatePassword, hash, function(err, isMatch) {
@@ -117,7 +108,6 @@ async function getUserById(id){
 //     callback(null, isMatch);
 //   });
 // };
-///////////////
 
 function* fakeUsersGenerator(numFakes) {
   let i = 0;
