@@ -6,8 +6,7 @@
   "author": "jackdbd <jackdebidda@gmail.com>",
   "license": "MIT",
   "engines": {
-    "node": "8.1.4",
-    "npm": "6.0.1"
+    "node": ">=8.1.4"
   },
   "scripts": {
     "start": "node server/index.js",
