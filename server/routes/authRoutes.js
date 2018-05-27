@@ -13,7 +13,7 @@ router.get("/", controllers.index_get);
 router.get("/me", controllers.me_get);
 router.put("/me/update-password", controllers.me_update_password_put);
 router.get("/user/:id/", controllers.user_id_get);
-router.post("/user/:id/like", controllers.user_id_like_post);
-router.post("/user/:id/unlike", controllers.user_id_unlike_post);
+router.put("/user/:id/like", controllers.user_id_like_put);
+router.put("/user/:id/unlike", controllers.user_id_unlike_put);
 
 module.exports = router;

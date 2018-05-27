@@ -1,4 +1,4 @@
-const { User, getUserById } = require("../models/user");
+const { User, getUserById, updateUser } = require("../models/user");
 const HttpStatus = require("http-status-codes");
 
 const NOT_FOUND = 'RESOURCE NOT FOUND'
@@ -25,10 +25,11 @@ exports.login_post = async function(req, res) {
 };
 
 exports.me_get = async function(req, res) {
+  // TODO: GET ID from JWT
+  const ID_FROM_JWT = '5b0977b976d8c83817f451ec'
   let user
   try {
-    user = await getUserById('5b0977b976d8c83817f451ec')
-    // user = await getUserById('TODO: get the _id of the mongo document from the JWT')
+    user = await getUserById(ID_FROM_JWT)
   } catch (err) {
     res.status(HttpStatus.BAD_REQUEST).json({ error: err })
   }
@@ -44,15 +45,63 @@ exports.me_update_password_put = async function(req, res) {
 };
 
 exports.user_id_get = async function(req, res) {
-  res.send({ TODO: "GET /user/:id" });
+  let user
+  try {
+    user = await getUserById(req.params.id)
+  } catch (err) {
+    res.status(HttpStatus.BAD_REQUEST).json({ error: err })
+  }
+  if (user) {
+    res.status(HttpStatus.OK).json(user);
+  } else {
+    res.status(HttpStatus.NOT_FOUND).json({ 'error': {'message': NOT_FOUND} })
+  }
 };
 
-exports.user_id_like_post = async function(req, res) {
-  res.send({ TODO: "POST /user/:id/like" });
+exports.user_id_like_put = async function(req, res) {
+  let doc
+  try {
+    doc = await getUserById(req.params.id)
+  } catch (err) {
+    res.status(HttpStatus.BAD_REQUEST).json({ error: err })
+  }
+  if (!doc) {
+    res.status(HttpStatus.NOT_FOUND).json({ 'error': {'message': NOT_FOUND} })
+  }
+
+  const newObj = Object.assign({}, doc._doc, {numLikes: doc._doc.numLikes + 1});
+  const message = `User ${doc.id} numLikes: ${doc.numLikes} -> ${newObj.numLikes}`
+
+  try {
+    const newDoc = await updateUser(doc.id, newObj);
+    res.status(HttpStatus.OK).json({ message, old: doc, new: newObj });
+  } catch (err) {
+    res.status(HttpStatus.BAD_REQUEST).json({ error: err })
+  }
 };
 
-exports.user_id_unlike_post = async function(req, res) {
-  res.send({ TODO: "POST /user/:id/unlike" });
+exports.user_id_unlike_put = async function(req, res) {
+  let doc
+  try {
+    doc = await getUserById(req.params.id)
+  } catch (err) {
+    res.status(HttpStatus.BAD_REQUEST).json({ error: err })
+  }
+  if (!doc) {
+    res.status(HttpStatus.NOT_FOUND).json({ 'error': {'message': NOT_FOUND} })
+  }
+
+  const newValue = doc._doc.numLikes - 1
+  const numLikes = newValue > 0 ? newValue : 0
+  const newObj = Object.assign({}, doc._doc, { numLikes });
+  const message = `User ${doc.id} numLikes: ${doc.numLikes} -> ${newObj.numLikes}`
+
+  try {
+    const newDoc = await updateUser(doc.id, newObj);
+    res.status(HttpStatus.OK).json({ message, old: doc, new: newObj });
+  } catch (err) {
+    res.status(HttpStatus.BAD_REQUEST).json({ error: err })
+  }
 };
 
 /**

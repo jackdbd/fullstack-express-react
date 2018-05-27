@@ -44,10 +44,10 @@ UserSchema.pre("save", function(next) {
   });
 });
 
-UserSchema.methods.generateAuthToken = function() {
-  const user = this;
-  console.log("TODO: AUTH TOKEN");
-};
+// UserSchema.methods.generateAuthToken = function() {
+//   const user = this;
+//   console.log("TODO: AUTH TOKEN");
+// };
 
 const User = mongoose.model(collection, UserSchema);
 
@@ -74,7 +74,7 @@ async function updateUser(id, obj) {
   // I tried to use findByIdAndUpdate but I couldn't understand how to trigger
   // "save" to hash the password
   await User.findByIdAndRemove({ _id: doc._id });
-  const newObj = Object.assign({ _id: doc._id }, obj);
+  const newObj = Object.assign({}, obj, { _id: doc._id });
   return await createUser(newObj);
 }
 
@@ -86,22 +86,13 @@ async function deleteUser(id) {
   }
 }
 
-///////////////
-module.exports.createUserB = function(newUser, callback) {
-  bcrypt.genSalt(10, function(err, salt) {
-    bcrypt.hash(newUser.password, salt, function(err, hash) {
-      newUser.password = hash;
-      newUser.save(callback);
-    });
-  });
-};
-
-function getUserByUsername(username, callback) {
-  const query = { username: username };
-  User.findOne(query, callback);
-}
+// function getUserByUsername(username, callback) {
+//   const query = { username: username };
+//   User.findOne(query, callback);
+// }
 
 async function getUserById(id){
+  // if (!mongoose.Types.ObjectId.isValid(id)) throw new Error()
   let user
   try {
     user = await User.findOne({ _id: id });
@@ -115,17 +106,17 @@ async function getUserById(id){
   }
 }
 
-module.exports.getUserById = function(id, callback) {
-  console.log("getUserById");
-  User.findById(id, callback);
-};
+// function getUserById (id, callback) {
+//   console.log("getUserById");
+//   User.findById(id, callback);
+// };
 
-module.exports.comparePassword = function(candidatePassword, hash, callback) {
-  bcrypt.compare(candidatePassword, hash, function(err, isMatch) {
-    if (err) throw err;
-    callback(null, isMatch);
-  });
-};
+// module.exports.comparePassword = function(candidatePassword, hash, callback) {
+//   bcrypt.compare(candidatePassword, hash, function(err, isMatch) {
+//     if (err) throw err;
+//     callback(null, isMatch);
+//   });
+// };
 ///////////////
 
 function* fakeUsersGenerator(numFakes) {
@@ -147,6 +138,5 @@ module.exports = {
   updateUser,
   deleteUser,
   getUserById,
-  getUserByUsername,
   fakeUsersGenerator
 };
