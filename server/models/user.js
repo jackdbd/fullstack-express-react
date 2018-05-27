@@ -101,6 +101,20 @@ function getUserByUsername(username, callback) {
   User.findOne(query, callback);
 }
 
+async function getUserById(id){
+  let user
+  try {
+    user = await User.findOne({ _id: id });
+  } catch (err) {
+    throw err;
+  }
+  if (user) {
+    return user
+  } else {
+    return false
+  }
+}
+
 module.exports.getUserById = function(id, callback) {
   console.log("getUserById");
   User.findById(id, callback);
@@ -132,6 +146,7 @@ module.exports = {
   readUser,
   updateUser,
   deleteUser,
+  getUserById,
   getUserByUsername,
   fakeUsersGenerator
 };

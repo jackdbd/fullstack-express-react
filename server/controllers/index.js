@@ -1,5 +1,7 @@
-const { User } = require("../models/user");
+const { User, getUserById } = require("../models/user");
 const HttpStatus = require("http-status-codes");
+
+const NOT_FOUND = 'RESOURCE NOT FOUND'
 
 exports.index_get = async function(req, res) {
   res.json({ TODO: "GET / (React frotend)" });
@@ -23,22 +25,17 @@ exports.login_post = async function(req, res) {
 };
 
 exports.me_get = async function(req, res) {
-  // TODO: get the _id of the mongo document from the JWT, then use it to fetch the user from MongoDB
-  const someUser = await User.findOne();
-  // const someNonExistingUserId = '5b084814c8b07925ff812501'
-  // const someInvalidId = '123'
-  let user;
+  let user
   try {
-    user = await User.findOne({ _id: someUser._id });
-    // user = await User.findOne({ _id: someNonExistingUserId });
-    // user = await User.findOne({ _id: someInvalidId });
+    user = await getUserById('5b0977b976d8c83817f451ec')
+    // user = await getUserById('TODO: get the _id of the mongo document from the JWT')
   } catch (err) {
-    res.status(HttpStatus.BAD_REQUEST).json({ error: err });
+    res.status(HttpStatus.BAD_REQUEST).json({ error: err })
   }
   if (user) {
-    res.json(user);
+    res.status(HttpStatus.OK).json(user);
   } else {
-    res.status(HttpStatus.NOT_FOUND).json({ error: "User not found!" });
+    res.status(HttpStatus.NOT_FOUND).json({ 'error': {'message': NOT_FOUND} })
   }
 };
 
