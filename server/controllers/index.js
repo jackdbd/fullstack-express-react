@@ -3,10 +3,11 @@ const HttpStatus = require("http-status-codes");
 
 const NOT_FOUND = "RESOURCE NOT FOUND";
 
-function extractIdFromJWT() {
+async function extractIdFromJWT() {
   // TODO: to be implemented
-  const id = "5b0977ba76d8c83817f451ed";
-  return id;
+  const user = await User.findOne({}, {}, { sort: { 'created_at' : -1 } })
+  // console.log(user._id)
+  return user._id
 }
 
 exports.signup_get = async function(req, res) {
@@ -27,7 +28,7 @@ exports.login_post = async function(req, res) {
 };
 
 exports.me_get = async function(req, res) {
-  const id = extractIdFromJWT();
+  const id = await extractIdFromJWT();
   let user;
   try {
     user = await getUserById(id);
@@ -43,28 +44,23 @@ exports.me_get = async function(req, res) {
 
 exports.me_update_password_put = async function(req, res) {
   const { newPassword } = req.body;
-  const id = extractIdFromJWT();
-  let doc;
+  const id = await extractIdFromJWT();
+  let user;
   try {
-    doc = await getUserById(id);
+    user = await getUserById(id);
   } catch (err) {
     res.status(HttpStatus.BAD_REQUEST).json({ error: err });
   }
-  if (!doc) {
+  if (!user) {
     res.status(HttpStatus.NOT_FOUND).json({ error: { message: NOT_FOUND } });
   }
 
-  const newObj = Object.assign({}, doc._doc, { password: newPassword });
+  const obj = Object.assign({}, user, { password: newPassword })._doc;
 
   try {
-    const newDoc = await updateUser(doc.id, newObj);
+    const newUser = await updateUser(user.id, obj);
     const message = `User ${id} updated the password`;
-    /* Important!
-      newObj.password is the new, unhashed password (i.e. the password chosen by
-      the user, before saving the object as a new mongoose model instance);
-      newDoc.password is the new, hashed password (i.e. the password created by
-      Mongoose in the "save" hook, and stored in MongoDB)
-    */
+  //  console.log('user.password\n', user.password, '\nobj.password\n', obj.password, '\nnewUser.password\n', newUser.password)
     res.status(HttpStatus.OK).json({ message });
   } catch (err) {
     res.status(HttpStatus.BAD_REQUEST).json({ error: err });
