@@ -1,6 +1,5 @@
 const bcrypt = require("bcryptjs");
 const mongoose = require("mongoose");
-const dummy = require("mongoose-dummy");
 
 const collection = "users";
 const UserSchema = new mongoose.Schema({
@@ -109,24 +108,11 @@ async function getUserById(id) {
 //   });
 // };
 
-function* fakeUsersGenerator(numFakes) {
-  let i = 0;
-  while (i < numFakes) {
-    const fakeObj = dummy(User, {
-      ignore: ["_id", "created_at", "__v"],
-      returnDate: true
-    });
-    i++;
-    yield fakeObj;
-  }
-}
-
 module.exports = {
   User,
   createUser,
   readUser,
   updateUser,
   deleteUser,
-  getUserById,
-  fakeUsersGenerator
+  getUserById
 };
