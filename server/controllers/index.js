@@ -9,10 +9,6 @@ function extractIdFromJWT() {
   return id;
 }
 
-exports.index_get = async function(req, res) {
-  res.json({ TODO: "GET / (React frontend)" });
-};
-
 exports.signup_get = async function(req, res) {
   res.send({ TODO: "GET /signup" });
 };

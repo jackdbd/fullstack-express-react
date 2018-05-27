@@ -6,7 +6,8 @@
   "author": "jackdbd <jackdebidda@gmail.com>",
   "license": "MIT",
   "engines": {
-    "node": "8.1.4"
+    "node": "8.1.4",
+    "npm": "6.0.1"
   },
   "scripts": {
     "start": "node server/index.js",
@@ -16,7 +17,8 @@
     "fake": "node scripts/fake.js",
     "test": "jest --detectOpenHandles --coverage",
     "test:watch": "jest --watch",
-    "ci": "jest --coverage"
+    "ci": "jest --coverage",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix frontend && npm run build --prefix frontend"
   },
   "jest": {
     "coverageDirectory": "./coverage/",
