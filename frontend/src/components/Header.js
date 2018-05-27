@@ -1,18 +1,27 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const Header = props => {
   return (
     <nav>
       <div className="nav-wrapper">
-        <a href="index.html" className="brand-logo">
+        <Link to="/" className="brand-logo">
           Logo
-        </a>
+        </Link>
         <ul className="right">
           <li>
-            <a href="TODO_USER_ID.html">Me</a>
+            <Link to="/me">Me</Link>
           </li>
           <li>
-            <a href="TODO_API_LOGIN.html">Login</a>
+            <Link to="/login">Login</Link>
+          </li>
+          <li>
+            <a
+              href="https://github.com/jackdbd/fullstack-express-react"
+              target="_blank"
+            >
+              Code
+            </a>
           </li>
         </ul>
       </div>
