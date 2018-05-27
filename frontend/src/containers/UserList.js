@@ -10,9 +10,10 @@ class UserList extends Component {
   }
 
   renderUser(user) {
+    const { username, numLikes } = user;
     return (
-      <li key={user.username}>
-        <User username={user.username} numLikes={user.numLikes} />
+      <li key={username}>
+        <User username={username} numLikes={numLikes} />
       </li>
     );
   }

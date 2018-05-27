@@ -11,6 +11,11 @@
     "coverage": "codecov",
     "ci": "npm-run-all --sequential test:verbose coverage"
   },
+  "proxy": {
+    "/most-liked": {
+      "target": "http://localhost:5000"
+    }
+  },
   "dependencies": {
     "axios": "^0.18.0",
     "materialize-css": "^0.100.2",
@@ -21,7 +26,9 @@
     "react-scripts": "1.1.4",
     "redux": "^4.0.0",
     "redux-devtools-extension": "^2.13.2",
-    "redux-logger": "^3.0.6"
+    "redux-logger": "^3.0.6",
+    "redux-promise-middleware": "^5.1.1",
+    "redux-thunk": "^2.2.0"
   },
   "devDependencies": {
     "codecov": "^3.0.2",
