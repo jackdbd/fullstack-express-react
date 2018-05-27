@@ -3,6 +3,12 @@ const HttpStatus = require("http-status-codes");
 
 const NOT_FOUND = "RESOURCE NOT FOUND";
 
+function extractIdFromJWT() {
+  // TODO: to be implemented
+  const id = "5b0977ba76d8c83817f451ed";
+  return id;
+}
+
 exports.index_get = async function(req, res) {
   res.json({ TODO: "GET / (React frotend)" });
 };
@@ -25,11 +31,10 @@ exports.login_post = async function(req, res) {
 };
 
 exports.me_get = async function(req, res) {
-  // TODO: GET ID from JWT
-  const ID_FROM_JWT = "5b0977b976d8c83817f451ec";
+  const id = extractIdFromJWT();
   let user;
   try {
-    user = await getUserById(ID_FROM_JWT);
+    user = await getUserById(id);
   } catch (err) {
     res.status(HttpStatus.BAD_REQUEST).json({ error: err });
   }
@@ -41,7 +46,33 @@ exports.me_get = async function(req, res) {
 };
 
 exports.me_update_password_put = async function(req, res) {
-  res.send({ TODO: "PUT (or PATCH) /me/update-password" });
+  const { newPassword } = req.body;
+  const id = extractIdFromJWT();
+  let doc;
+  try {
+    doc = await getUserById(id);
+  } catch (err) {
+    res.status(HttpStatus.BAD_REQUEST).json({ error: err });
+  }
+  if (!doc) {
+    res.status(HttpStatus.NOT_FOUND).json({ error: { message: NOT_FOUND } });
+  }
+
+  const newObj = Object.assign({}, doc._doc, { password: newPassword });
+
+  try {
+    const newDoc = await updateUser(doc.id, newObj);
+    const message = `User ${id} updated the password`;
+    /* Important!
+      newObj.password is the new, unhashed password (i.e. the password chosen by
+      the user, before saving the object as a new mongoose model instance);
+      newDoc.password is the new, hashed password (i.e. the password created by
+      Mongoose in the "save" hook, and stored in MongoDB)
+    */
+    res.status(HttpStatus.OK).json({ message });
+  } catch (err) {
+    res.status(HttpStatus.BAD_REQUEST).json({ error: err });
+  }
 };
 
 exports.user_id_get = async function(req, res) {
