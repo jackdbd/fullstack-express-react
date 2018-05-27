@@ -5,10 +5,6 @@ import { fetchUsers } from "../actions";
 import User from "../components/User";
 
 class UserList extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   componentDidMount() {
     this.props.fetchUsers();
   }
