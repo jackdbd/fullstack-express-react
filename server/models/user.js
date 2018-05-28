@@ -1,5 +1,6 @@
 const bcrypt = require("bcryptjs");
 const mongoose = require("mongoose");
+const jwt = require("jsonwebtoken")
 
 const collection = "users";
 const UserSchema = new mongoose.Schema({
@@ -126,10 +127,17 @@ UserSchema.statics.comparePasswordWithHash = async function(password, hash) {
   return isMatch;
 };
 
-// UserSchema.methods.generateAuthToken = function() {
-//   const user = this;
-//   console.log("TODO: AUTH TOKEN");
-// };
+UserSchema.methods.generateAuthToken = function() {
+  const user = this;
+  const _id = user._id.toHexString();
+  const access = 'auth';
+  const token = jwt.sign({_id, access}, process.env.JWT_SECRET).toString()
+  return token
+};
+
+UserSchema.statics.getUserByToken = async function(token) {
+  // TODO
+}
 
 const User = mongoose.model(collection, UserSchema);
 

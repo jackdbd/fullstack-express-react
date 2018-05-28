@@ -1,7 +1,6 @@
 const {
   User,
   createUser,
-  getUserById,
   updateUser,
   deleteUser
 } = require("../models/user");
@@ -16,41 +15,61 @@ async function extractIdFromJWT() {
   return user._id;
 }
 
-/** Try to register a user.
+/** POST /signup
+ * Register anew user and generate an authentication token (e.g. JSON Web Token)
+ * for the client to include in future requests with the server.
  *
  * @param {object} req
  * @param {object} res
  */
 exports.signup_post = async function(req, res) {
+  let user
   try {
-    const user = await createUser(req.body);
-    res.status(HttpStatus.OK).json({ message: "User created" });
+    user = await createUser(req.body);
   } catch (err) {
     // TODO: one should not return the Mongoose/MongoDB error. Maybe it's better
     // to log it with a "dev" logger level.
     res.status(HttpStatus.BAD_REQUEST).json({ error: err });
-    // res.status(HttpStatus.BAD_REQUEST).json({ error: 'Could not signup' });
+  }
+  if (user) {
+    const message = "You are now registered and logged in"
+    const token = user.generateAuthToken()
+    res.status(HttpStatus.OK).json({ message, token });
+  } else {
+    // TODO: is that possible to NOT have a user at this point?
+    res.status(HttpStatus.NOT_FOUND).json({ error: { message: NOT_FOUND } });
   }
 };
 
 /** POST /login
- * Nothing special to do here. If we reached this function, it means that the
- * authentication middleware (e.g. passport) let us pass through. We never
- * reach point if we are not authenticated, we get redirected by the
- * authentication middleware.
+ * Generate an authentication token (e.g. JSON Web Token) for the client to 
+ * include in future requests with the server.
  *
  * @param {object} req
  * @param {object} res
  */
 exports.login_post = async function(req, res) {
-  res.json({ message: "You are now logged in" });
+  const { email, username, password } = req.body;
+  let user
+  try {
+    user = await User.getUserByEmail(email)
+  } catch(err) {
+    res.status(HttpStatus.BAD_REQUEST).json({ error: err });
+  }
+  if (user) {
+    const message = "You are now logged in"
+    const token = user.generateAuthToken()
+    res.status(HttpStatus.OK).json({ message, token });
+  } else {
+    res.status(HttpStatus.NOT_FOUND).json({ error: { message: NOT_FOUND } });
+  }
 };
 
 exports.me_get = async function(req, res) {
   const id = await extractIdFromJWT();
   let user;
   try {
-    user = await getUserById(id);
+    user = await User.getUserById(id);
   } catch (err) {
     res.status(HttpStatus.BAD_REQUEST).json({ error: err });
   }
@@ -66,7 +85,7 @@ exports.me_update_password_put = async function(req, res) {
   const id = await extractIdFromJWT();
   let user;
   try {
-    user = await getUserById(id);
+    user = await User.getUserById(id);
   } catch (err) {
     res.status(HttpStatus.BAD_REQUEST).json({ error: err });
   }
@@ -89,7 +108,7 @@ exports.me_update_password_put = async function(req, res) {
 exports.user_id_get = async function(req, res) {
   let user;
   try {
-    user = await getUserById(req.params.id);
+    user = await User.getUserById(req.params.id);
   } catch (err) {
     res.status(HttpStatus.BAD_REQUEST).json({ error: err });
   }
@@ -103,7 +122,7 @@ exports.user_id_get = async function(req, res) {
 exports.user_id_like_put = async function(req, res) {
   let doc;
   try {
-    doc = await getUserById(req.params.id);
+    doc = await User.getUserById(req.params.id);
   } catch (err) {
     res.status(HttpStatus.BAD_REQUEST).json({ error: err });
   }
@@ -129,7 +148,7 @@ exports.user_id_like_put = async function(req, res) {
 exports.user_id_unlike_put = async function(req, res) {
   let doc;
   try {
-    doc = await getUserById(req.params.id);
+    doc = await User.getUserById(req.params.id);
   } catch (err) {
     res.status(HttpStatus.BAD_REQUEST).json({ error: err });
   }
@@ -156,7 +175,7 @@ exports.user_id_delete = async function(req, res) {
   const { id } = req.params;
   let user;
   try {
-    user = await getUserById(id);
+    user = await User.getUserById(id);
   } catch (err) {
     res.status(HttpStatus.BAD_REQUEST).json({ error: err });
   }
