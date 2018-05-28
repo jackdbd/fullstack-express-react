@@ -43,30 +43,30 @@ UserSchema.pre("save", function(next) {
   });
 });
 
-UserSchema.statics.findByEmail = async function (email) {
+UserSchema.statics.findByEmail = async function(email) {
   // const User = this;
-  let user
+  let user;
   try {
-    user = await User.findOne({email});
+    user = await User.findOne({ email });
   } catch (err) {
-    throw err
+    throw err;
   }
   if (user) {
-    return user
+    return user;
   } else {
-    return false
+    return false;
   }
-}
+};
 
-UserSchema.statics.comparePasswordWithHash = async function (password, hash) {
-  let isMatch
+UserSchema.statics.comparePasswordWithHash = async function(password, hash) {
+  let isMatch;
   try {
-    isMatch = await bcrypt.compare(password, hash)
+    isMatch = await bcrypt.compare(password, hash);
   } catch (err) {
-    throw err
+    throw err;
   }
-  return isMatch
-}
+  return isMatch;
+};
 
 // module.exports.comparePassword = function(candidatePassword, hash, callback) {
 //   bcrypt.compare(candidatePassword, hash, function(err, isMatch) {
@@ -74,7 +74,6 @@ UserSchema.statics.comparePasswordWithHash = async function (password, hash) {
 //     callback(null, isMatch);
 //   });
 // };
-
 
 // UserSchema.methods.generateAuthToken = function() {
 //   const user = this;
@@ -140,5 +139,5 @@ module.exports = {
   readUser,
   updateUser,
   deleteUser,
-  getUserById,
+  getUserById
 };

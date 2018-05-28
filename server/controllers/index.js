@@ -1,20 +1,29 @@
-const { User, createUser, getUserById, updateUser, deleteUser } = require("../models/user");
+const {
+  User,
+  createUser,
+  getUserById,
+  updateUser,
+  deleteUser
+} = require("../models/user");
 const HttpStatus = require("http-status-codes");
 
 const NOT_FOUND = "RESOURCE NOT FOUND";
 
 async function extractIdFromJWT() {
   // TODO: to be implemented
-  const user = await User.findOne({}, {}, { sort: { 'created_at' : -1 } })
+  const user = await User.findOne({}, {}, { sort: { created_at: -1 } });
   // console.log(user._id)
-  return user._id
+  return user._id;
 }
 
 exports.signup_post = async function(req, res) {
   try {
     const user = await createUser(req.body);
-    res.status(HttpStatus.OK).json(user).redirect('/');
-  } catch (err){
+    res
+      .status(HttpStatus.OK)
+      .json(user)
+      .redirect("/");
+  } catch (err) {
     // TODO: one should not return the MongoDB error
     res.status(HttpStatus.BAD_REQUEST).json({ error: err });
   }
@@ -22,24 +31,31 @@ exports.signup_post = async function(req, res) {
 
 exports.login_post = async function(req, res) {
   // console.log("AUTHENTICATED?", req.isAuthenticated());
-  const {username, email, password} = req.body
+  const { username, email, password } = req.body;
   if (!email || !password) {
-    res.status(HttpStatus.BAD_REQUEST).json({ error: 'you must login with email and password!' });
+    res
+      .status(HttpStatus.BAD_REQUEST)
+      .json({ error: "you must login with email and password!" });
   }
-  let user
+  let user;
   try {
-    user = await User.findByEmail(email)
-  } catch(err){
+    user = await User.findByEmail(email);
+  } catch (err) {
     res.status(HttpStatus.BAD_REQUEST).json({ error: err });
   }
   if (!user) {
-    res.status(HttpStatus.NOT_FOUND).json({ error: { message: `No user with email ${email}` } })
+    res
+      .status(HttpStatus.NOT_FOUND)
+      .json({ error: { message: `No user with email ${email}` } });
   } else {
-    const isMatch = await User.comparePasswordWithHash(password, user.password)
+    const isMatch = await User.comparePasswordWithHash(password, user.password);
     if (isMatch) {
-      res.status(HttpStatus.OK).json(user).redirect('/')
+      res
+        .status(HttpStatus.OK)
+        .json(user)
+        .redirect("/");
     } else {
-      res.json({ error: { message: 'Wrong password' } })
+      res.json({ error: { message: "Wrong password" } });
     }
   }
 };
@@ -77,7 +93,7 @@ exports.me_update_password_put = async function(req, res) {
   try {
     const newUser = await updateUser(user.id, obj);
     const message = `User ${id} updated the password`;
-  //  console.log('user.password\n', user.password, '\nobj.password\n', obj.password, '\nnewUser.password\n', newUser.password)
+    //  console.log('user.password\n', user.password, '\nobj.password\n', obj.password, '\nnewUser.password\n', newUser.password)
     res.status(HttpStatus.OK).json({ message });
   } catch (err) {
     res.status(HttpStatus.BAD_REQUEST).json({ error: err });
