@@ -1,4 +1,4 @@
-const { User, getUserById, updateUser, deleteUser } = require("../models/user");
+const { User, createUser, getUserById, updateUser, deleteUser } = require("../models/user");
 const HttpStatus = require("http-status-codes");
 
 const NOT_FOUND = "RESOURCE NOT FOUND";
@@ -10,21 +10,38 @@ async function extractIdFromJWT() {
   return user._id
 }
 
-exports.signup_get = async function(req, res) {
-  res.send({ TODO: "GET /signup" });
-};
-
 exports.signup_post = async function(req, res) {
-  res.send({ TODO: "POST /signup" });
-};
-
-exports.login_get = async function(req, res) {
-  res.send({ TODO: "GET /login" });
+  try {
+    const user = await createUser(req.body);
+    res.status(HttpStatus.OK).json(user).redirect('/');
+  } catch (err){
+    // TODO: one should not return the MongoDB error
+    res.status(HttpStatus.BAD_REQUEST).json({ error: err });
+  }
 };
 
 exports.login_post = async function(req, res) {
-  console.log("AUTHENTICATED?", req.isAuthenticated());
-  res.send({ TODO: "POST /login" });
+  // console.log("AUTHENTICATED?", req.isAuthenticated());
+  const {username, email, password} = req.body
+  if (!email || !password) {
+    res.status(HttpStatus.BAD_REQUEST).json({ error: 'you must login with email and password!' });
+  }
+  let user
+  try {
+    user = await User.findByEmail(email)
+  } catch(err){
+    res.status(HttpStatus.BAD_REQUEST).json({ error: err });
+  }
+  if (!user) {
+    res.status(HttpStatus.NOT_FOUND).json({ error: { message: `No user with email ${email}` } })
+  } else {
+    const isMatch = await User.comparePasswordWithHash(password, user.password)
+    if (isMatch) {
+      res.status(HttpStatus.OK).json(user).redirect('/')
+    } else {
+      res.json({ error: { message: 'Wrong password' } })
+    }
+  }
 };
 
 exports.me_get = async function(req, res) {

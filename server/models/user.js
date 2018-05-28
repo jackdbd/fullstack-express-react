@@ -43,6 +43,39 @@ UserSchema.pre("save", function(next) {
   });
 });
 
+UserSchema.statics.findByEmail = async function (email) {
+  // const User = this;
+  let user
+  try {
+    user = await User.findOne({email});
+  } catch (err) {
+    throw err
+  }
+  if (user) {
+    return user
+  } else {
+    return false
+  }
+}
+
+UserSchema.statics.comparePasswordWithHash = async function (password, hash) {
+  let isMatch
+  try {
+    isMatch = await bcrypt.compare(password, hash)
+  } catch (err) {
+    throw err
+  }
+  return isMatch
+}
+
+// module.exports.comparePassword = function(candidatePassword, hash, callback) {
+//   bcrypt.compare(candidatePassword, hash, function(err, isMatch) {
+//     if (err) throw err;
+//     callback(null, isMatch);
+//   });
+// };
+
+
 // UserSchema.methods.generateAuthToken = function() {
 //   const user = this;
 //   console.log("TODO: AUTH TOKEN");
@@ -101,18 +134,11 @@ async function getUserById(id) {
   }
 }
 
-// module.exports.comparePassword = function(candidatePassword, hash, callback) {
-//   bcrypt.compare(candidatePassword, hash, function(err, isMatch) {
-//     if (err) throw err;
-//     callback(null, isMatch);
-//   });
-// };
-
 module.exports = {
   User,
   createUser,
   readUser,
   updateUser,
   deleteUser,
-  getUserById
+  getUserById,
 };
