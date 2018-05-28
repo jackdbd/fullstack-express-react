@@ -1,6 +1,6 @@
 const bcrypt = require("bcryptjs");
 const mongoose = require("mongoose");
-const jwt = require("jsonwebtoken")
+const jwt = require("jsonwebtoken");
 
 const collection = "users";
 const UserSchema = new mongoose.Schema({
@@ -129,15 +129,14 @@ UserSchema.statics.comparePasswordWithHash = async function(password, hash) {
 
 UserSchema.methods.generateAuthToken = function() {
   const user = this;
-  const _id = user._id.toHexString();
-  const access = 'auth';
-  const token = jwt.sign({_id, access}, process.env.JWT_SECRET).toString()
-  return token
+  const payload = { _id: user._id.toHexString(), access: "auth" };
+  const secret = process.env.JWT_SECRET;
+  const options = {
+    expiresIn: 3600 // 1 hour
+  };
+  const token = jwt.sign(payload, secret, options).toString();
+  return token;
 };
-
-UserSchema.statics.getUserByToken = async function(token) {
-  // TODO
-}
 
 const User = mongoose.model(collection, UserSchema);
 

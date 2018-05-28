@@ -1,13 +1,7 @@
 const passport = require("./passport");
+const { authOrRedirect } = require("./redirects");
 
-function authOrRedirect(req, res, next) {
-  console.log("Authenticated?", req.isAuthenticated());
-  if (req.isAuthenticated()) {
-    next();
-  } else {
-    res.redirect("/login");
-  }
-}
+console.log(authOrRedirect)
 
 module.exports = {
   passport,

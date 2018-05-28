@@ -1,19 +1,7 @@
-const {
-  User,
-  createUser,
-  updateUser,
-  deleteUser
-} = require("../models/user");
+const { User, createUser, updateUser, deleteUser } = require("../models/user");
 const HttpStatus = require("http-status-codes");
 
 const NOT_FOUND = "RESOURCE NOT FOUND";
-
-async function extractIdFromJWT() {
-  // TODO: to be implemented
-  const user = await User.findOne({}, {}, { sort: { created_at: -1 } });
-  console.log("TODO extractIdFromJWT", user._id);
-  return user._id;
-}
 
 /** POST /signup
  * Register anew user and generate an authentication token (e.g. JSON Web Token)
@@ -23,7 +11,7 @@ async function extractIdFromJWT() {
  * @param {object} res
  */
 exports.signup_post = async function(req, res) {
-  let user
+  let user;
   try {
     user = await createUser(req.body);
   } catch (err) {
@@ -32,9 +20,9 @@ exports.signup_post = async function(req, res) {
     res.status(HttpStatus.BAD_REQUEST).json({ error: err });
   }
   if (user) {
-    const message = "You are now registered and logged in"
-    const token = user.generateAuthToken()
-    res.status(HttpStatus.OK).json({ message, token });
+    const message = "You are now registered and logged in";
+    const token = user.generateAuthToken();
+    res.status(HttpStatus.OK).json({ token, auth: true });
   } else {
     // TODO: is that possible to NOT have a user at this point?
     res.status(HttpStatus.NOT_FOUND).json({ error: { message: NOT_FOUND } });
@@ -42,7 +30,7 @@ exports.signup_post = async function(req, res) {
 };
 
 /** POST /login
- * Generate an authentication token (e.g. JSON Web Token) for the client to 
+ * Generate an authentication token (e.g. JSON Web Token) for the client to
  * include in future requests with the server.
  *
  * @param {object} req
@@ -50,23 +38,24 @@ exports.signup_post = async function(req, res) {
  */
 exports.login_post = async function(req, res) {
   const { email, username, password } = req.body;
-  let user
+  let user;
   try {
-    user = await User.getUserByEmail(email)
-  } catch(err) {
+    user = await User.getUserByEmail(email);
+  } catch (err) {
     res.status(HttpStatus.BAD_REQUEST).json({ error: err });
   }
   if (user) {
-    const message = "You are now logged in"
-    const token = user.generateAuthToken()
-    res.status(HttpStatus.OK).json({ message, token });
+    const message = "You are now logged in";
+    const token = user.generateAuthToken();
+    res.status(HttpStatus.OK).json({ message, token, auth: true });
   } else {
     res.status(HttpStatus.NOT_FOUND).json({ error: { message: NOT_FOUND } });
   }
 };
 
 exports.me_get = async function(req, res) {
-  const id = await extractIdFromJWT();
+  // console.log('req.locals.userId', res.locals.userId)
+  const id = res.locals.userId;
   let user;
   try {
     user = await User.getUserById(id);
@@ -74,7 +63,8 @@ exports.me_get = async function(req, res) {
     res.status(HttpStatus.BAD_REQUEST).json({ error: err });
   }
   if (user) {
-    res.status(HttpStatus.OK).json(user);
+    const { username, numLikes } = user;
+    res.status(HttpStatus.OK).json({ username, numLikes });
   } else {
     res.status(HttpStatus.NOT_FOUND).json({ error: { message: NOT_FOUND } });
   }
@@ -82,7 +72,8 @@ exports.me_get = async function(req, res) {
 
 exports.me_update_password_put = async function(req, res) {
   const { newPassword } = req.body;
-  const id = await extractIdFromJWT();
+  // console.log('req.locals.userId', res.locals.userId)
+  const id = res.locals.userId;
   let user;
   try {
     user = await User.getUserById(id);
@@ -113,7 +104,8 @@ exports.user_id_get = async function(req, res) {
     res.status(HttpStatus.BAD_REQUEST).json({ error: err });
   }
   if (user) {
-    res.status(HttpStatus.OK).json(user);
+    const { username, numLikes } = user;
+    res.status(HttpStatus.OK).json({ username, numLikes });
   } else {
     res.status(HttpStatus.NOT_FOUND).json({ error: { message: NOT_FOUND } });
   }
@@ -186,7 +178,7 @@ exports.user_id_delete = async function(req, res) {
   try {
     const doc = await deleteUser(id);
     const message = `User ${id} deleted from the database`;
-    res.status(HttpStatus.OK).send({ message });
+    res.status(HttpStatus.OK).json({ message });
   } catch (err) {
     res.json({ error: err });
   }
