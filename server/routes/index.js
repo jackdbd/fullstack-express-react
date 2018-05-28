@@ -1,7 +1,7 @@
-const clearRoutes = require("./clearRoutes");
-const authRoutes = require("./authRoutes");
+const accessRoutes = require("./accessRoutes");
+const apiRoutes = require("./apiRoutes");
 
 module.exports = {
-  clearRoutes,
-  authRoutes
+  accessRoutes,
+  apiRoutes
 };

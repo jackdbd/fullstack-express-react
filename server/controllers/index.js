@@ -12,52 +12,38 @@ const NOT_FOUND = "RESOURCE NOT FOUND";
 async function extractIdFromJWT() {
   // TODO: to be implemented
   const user = await User.findOne({}, {}, { sort: { created_at: -1 } });
-  // console.log(user._id)
+  console.log("TODO extractIdFromJWT", user._id);
   return user._id;
 }
 
+/** Try to register a user.
+ *
+ * @param {object} req
+ * @param {object} res
+ */
 exports.signup_post = async function(req, res) {
   try {
     const user = await createUser(req.body);
-    res
-      .status(HttpStatus.OK)
-      .json(user)
-      .redirect("/");
+    res.status(HttpStatus.OK).json({ message: "User created" });
   } catch (err) {
-    // TODO: one should not return the MongoDB error
+    // TODO: one should not return the Mongoose/MongoDB error. Maybe it's better
+    // to log it with a "dev" logger level.
     res.status(HttpStatus.BAD_REQUEST).json({ error: err });
+    // res.status(HttpStatus.BAD_REQUEST).json({ error: 'Could not signup' });
   }
 };
 
+/** POST /login
+ * Nothing special to do here. If we reached this function, it means that the
+ * authentication middleware (e.g. passport) let us pass through. We never
+ * reach point if we are not authenticated, we get redirected by the
+ * authentication middleware.
+ *
+ * @param {object} req
+ * @param {object} res
+ */
 exports.login_post = async function(req, res) {
-  // console.log("AUTHENTICATED?", req.isAuthenticated());
-  const { username, email, password } = req.body;
-  if (!email || !password) {
-    res
-      .status(HttpStatus.BAD_REQUEST)
-      .json({ error: "you must login with email and password!" });
-  }
-  let user;
-  try {
-    user = await User.findByEmail(email);
-  } catch (err) {
-    res.status(HttpStatus.BAD_REQUEST).json({ error: err });
-  }
-  if (!user) {
-    res
-      .status(HttpStatus.NOT_FOUND)
-      .json({ error: { message: `No user with email ${email}` } });
-  } else {
-    const isMatch = await User.comparePasswordWithHash(password, user.password);
-    if (isMatch) {
-      res
-        .status(HttpStatus.OK)
-        .json(user)
-        .redirect("/");
-    } else {
-      res.json({ error: { message: "Wrong password" } });
-    }
-  }
+  res.json({ message: "You are now logged in" });
 };
 
 exports.me_get = async function(req, res) {
@@ -187,15 +173,20 @@ exports.user_id_delete = async function(req, res) {
   }
 };
 
-/**
+/** GET /most-liked
+ * Return a list of users, sorted by numLikes in descending order.
  *
- *
- * @param {any} req
- * @param {any} res
+ * @param {object} req
+ * @param {object} res
  */
 exports.most_liked_get = async function(req, res) {
-  const docs = await User.find({}, ["username", "numLikes"], {
-    sort: { numLikes: -1 }
-  });
-  res.json(docs.map(d => ({ username: d.username, numLikes: d.numLikes })));
+  let docs;
+  try {
+    docs = await User.find({}, ["username", "numLikes"], {
+      sort: { numLikes: -1 }
+    });
+    res.json(docs.map(d => ({ username: d.username, numLikes: d.numLikes })));
+  } catch (err) {
+    res.json({ error: err });
+  }
 };

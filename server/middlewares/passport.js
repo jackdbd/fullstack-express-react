@@ -1,42 +1,34 @@
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
-const user = require("../models/user");
-
-// console.log("module.function", user.getUserByUsername);
-// console.log("module.Model().instancemethod", user.User({}).generateAuthToken);
-// console.log("User.getUserByUsername", User.getUserByUsername);
+const { User } = require("../models/user");
 
 passport.use(
   new LocalStrategy({}, function(username, password, done) {
-    console.log("LocalStrategy -> getUserByUsername");
-    User.getUserByUsername(username, function(err, user) {
-      if (err) throw err;
-      if (!user) {
-        return done(null, false, { message: "Unknown User" });
-      }
-
-      User.comparePassword(password, user.password, function(err, isMatch) {
-        if (err) throw err;
-        if (isMatch) {
-          return done(null, user);
-        } else {
-          return done(null, false, { message: "Invalid password" });
-        }
+    // TODO: check if we need to distinguish between user and false in .then
+    User.getUserByCredentials(username, password)
+      .then(user => {
+        done(null, user);
+      })
+      .catch(err => {
+        done(null, false, { error: err });
       });
-    });
   })
 );
 
 passport.serializeUser(function(user, done) {
-  console.log("serializeUser");
+  // console.log("serializeUser", user);
   done(null, user.id);
 });
 
 passport.deserializeUser(function(id, done) {
-  console.log("deserializeUser");
-  User.getUserById(id, function(err, user) {
-    done(err, user);
-  });
+  // console.log("deserializeUser", id);
+  User.getUserById(id)
+    .then(user => {
+      done(null, user);
+    })
+    .catch(err => {
+      done(null, false, { error: err });
+    });
 });
 
 module.exports = passport;

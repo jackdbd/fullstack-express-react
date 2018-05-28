@@ -1,4 +1,3 @@
-// require("dotenv").load();
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
@@ -7,7 +6,7 @@ const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const passport = require("passport");
 const logger = require("morgan");
-const { clearRoutes, authRoutes } = require("./routes");
+const { accessRoutes, apiRoutes } = require("./routes");
 
 const app = express();
 
@@ -29,7 +28,7 @@ app.use(logger("dev"));
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use("/", clearRoutes);
-app.use("/", authRoutes);
+app.use("/", accessRoutes);
+app.use("/", apiRoutes); // TODO: change "/" to "/api"
 
 module.exports = app;

@@ -30,21 +30,59 @@ const UserSchema = new mongoose.Schema({
   }
 });
 
+/* 
+  The Mongoose "save" document middleware is a hook which is passed control
+  during execution of asynchronous functions.
+  In document middlewares, `this` refers to the BSON document stored in MongoDB.
+  http://mongoosejs.com/docs/middleware.html
+*/
 UserSchema.pre("save", function(next) {
   const doc = this;
-  const rounds = 10;
-  bcrypt.genSalt(rounds, (err, salt) => {
+  const SALT_ROUNDS = 10;
+  bcrypt.genSalt(SALT_ROUNDS, (err, salt) => {
     bcrypt.hash(doc.password, salt, (err, hash) => {
-      if (err) return next(err);
-      doc.password = hash;
-      // console.log("save", doc)
-      next();
+      if (err) {
+        // pass the error to the next middleware function
+        return next(err);
+      } else {
+        // don't commit to the database the user's password, but its hash
+        doc.password = hash;
+        next();
+      }
     });
   });
 });
 
-UserSchema.statics.findByEmail = async function(email) {
-  // const User = this;
+UserSchema.statics.getUserById = async function(id) {
+  // if (!mongoose.Types.ObjectId.isValid(id)) throw new Error()
+  let user;
+  try {
+    user = await User.findOne({ _id: id });
+  } catch (err) {
+    throw err;
+  }
+  if (user) {
+    return user;
+  } else {
+    return false;
+  }
+};
+
+UserSchema.statics.getUserByUsername = async function(username) {
+  let user;
+  try {
+    user = await User.findOne({ username });
+  } catch (err) {
+    throw err;
+  }
+  if (user) {
+    return user;
+  } else {
+    return false;
+  }
+};
+
+UserSchema.statics.getUserByEmail = async function(email) {
   let user;
   try {
     user = await User.findOne({ email });
@@ -52,6 +90,26 @@ UserSchema.statics.findByEmail = async function(email) {
     throw err;
   }
   if (user) {
+    return user;
+  } else {
+    return false;
+  }
+};
+
+UserSchema.statics.getUserByCredentials = async function(username, password) {
+  let user;
+  try {
+    user = await User.getUserByUsername(username);
+  } catch (err) {
+    throw err;
+  }
+  let isMatch;
+  try {
+    isMatch = await User.comparePasswordWithHash(password, user.password);
+  } catch (err) {
+    throw err;
+  }
+  if (isMatch) {
     return user;
   } else {
     return false;
@@ -67,13 +125,6 @@ UserSchema.statics.comparePasswordWithHash = async function(password, hash) {
   }
   return isMatch;
 };
-
-// module.exports.comparePassword = function(candidatePassword, hash, callback) {
-//   bcrypt.compare(candidatePassword, hash, function(err, isMatch) {
-//     if (err) throw err;
-//     callback(null, isMatch);
-//   });
-// };
 
 // UserSchema.methods.generateAuthToken = function() {
 //   const user = this;
@@ -118,26 +169,10 @@ async function deleteUser(id) {
   }
 }
 
-async function getUserById(id) {
-  // if (!mongoose.Types.ObjectId.isValid(id)) throw new Error()
-  let user;
-  try {
-    user = await User.findOne({ _id: id });
-  } catch (err) {
-    throw err;
-  }
-  if (user) {
-    return user;
-  } else {
-    return false;
-  }
-}
-
 module.exports = {
   User,
   createUser,
   readUser,
   updateUser,
-  deleteUser,
-  getUserById
+  deleteUser
 };
