@@ -2,9 +2,10 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const Header = props => {
+  const className = "nav-wrapper red accent-4";
   return (
     <nav>
-      <div className="nav-wrapper">
+      <div className={className}>
         <Link to="/" className="brand-logo">
           Logo
         </Link>

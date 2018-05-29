@@ -9,11 +9,11 @@ class UserList extends Component {
     this.props.fetchUsers();
   }
 
-  renderUser(user) {
-    const { username, numLikes } = user;
+  renderUser(props) {
+    const isLiked = Math.random() > 0.5 ? true : false;
     return (
-      <li key={username}>
-        <User username={username} numLikes={numLikes} />
+      <li key={props.username}>
+        <User {...props} isLiked={isLiked} />
       </li>
     );
   }
