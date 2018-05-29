@@ -4,6 +4,9 @@ export const FETCH_USERS = "fetch users from db";
 export const LIKE_USER = "like user and update his numLikes in db";
 export const UNLIKE_USER = "unlike user and update his numLikes in db";
 
+const HOST = process.env.HOST || "http://localhost";
+const PORT = process.env.PORT || 5000;
+
 /* 
   What is the best way to connect the React frontend with the Express backend in
   a development environment? I think there are several possibilities:
@@ -33,7 +36,7 @@ export function likeUser(id) {
   // const request = axios.put(`/user/${id}/like`).set("x-access-token", token)
   // const request = axios.get(`/most-liked`)
   // const request = axios.get(`/me`)
-  const url = `http://localhost:5000/user/${id}/like`;
+  const url = `${HOST}:${PORT}/user/${id}/like`;
   const data = JSON.stringify({ id: id });
   const config = {
     headers: { "Content-Type": "application/json" }
