@@ -5,8 +5,8 @@ node_js:
   - "stable"
 install:
   - yarn install
-before_script:
-  - yarn install --prefix frontend
+# before_script:
+#   - yarn install --prefix frontend
 script:
   - yarn run ci
 notifications:
