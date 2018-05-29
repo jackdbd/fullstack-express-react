@@ -16,7 +16,7 @@
     "fake": "node scripts/fake.js",
     "test": "jest --detectOpenHandles --coverage",
     "test:watch": "jest --watch",
-    "ci": "jest --coverage && cd frontend && npm run test",
+    "ci": "jest --coverage && cd frontend && yarn add react-scripts && yarn run test",
     "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix frontend && npm run build --prefix frontend"
   },
   "jest": {
