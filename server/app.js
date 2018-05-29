@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
-// const cors = require("cors");
+const cors = require("cors");
 const session = require("express-session");
 const passport = require("passport");
 const logger = require("morgan");
@@ -15,7 +15,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-// app.use(cors());
+app.use(cors());
 
 app.use(passport.initialize());
 app.use(passport.session());

@@ -1,6 +1,8 @@
 import axios from "axios";
 
-export const FETCH_USERS = "fetch users from a remote mongo db database";
+export const FETCH_USERS = "fetch users from db";
+export const LIKE_USER = "like user and update his numLikes in db";
+export const UNLIKE_USER = "unlike user and update his numLikes in db";
 
 /* 
   What is the best way to connect the React frontend with the Express backend in
@@ -17,19 +19,6 @@ export const FETCH_USERS = "fetch users from a remote mongo db database";
 //   }
 // });
 
-// const users = [
-//   { username: "bob123", numLikes: 4 },
-//   { username: "anna456", numLikes: 7 },
-//   { username: "jack987", numLikes: 3 },
-//   { username: "john333", numLikes: 5 },
-//   { username: "steve111", numLikes: 1 }
-// ];
-
-// export function fetchUsers() {
-//   const action = { type: FETCH_USERS, payload: users };
-//   return action;
-// }
-
 export function fetchUsers() {
   return function(dispatch) {
     dispatch({
@@ -38,3 +27,24 @@ export function fetchUsers() {
     });
   };
 }
+
+export function likeUser(id) {
+  // TODO
+  // const request = axios.put(`/user/${id}/like`).set("x-access-token", token)
+  // const request = axios.get(`/most-liked`)
+  // const request = axios.get(`/me`)
+  const url = `http://localhost:5000/user/${id}/like`;
+  const data = JSON.stringify({ id: id });
+  const config = {
+    headers: { "Content-Type": "application/json" }
+  };
+  const request = axios.put(url, data, config);
+  return function(dispatch) {
+    dispatch({
+      type: LIKE_USER,
+      payload: request
+    });
+  };
+}
+
+// TODO: unlike user

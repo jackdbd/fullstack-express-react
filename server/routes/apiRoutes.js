@@ -19,7 +19,9 @@ router.put(
   controllers.me_update_password_put
 );
 router.get("/user/:id", controllers.user_id_get);
-router.put("/user/:id/like", authOrRedirect, controllers.user_id_like_put);
+// TODO
+// router.put("/user/:id/like", authOrRedirect, controllers.user_id_like_put);
+router.put("/user/:id/like", controllers.user_id_like_put);
 router.put("/user/:id/unlike", authOrRedirect, controllers.user_id_unlike_put);
 router.delete("/user/:id", controllers.user_id_delete);
 router.get("/most-liked", controllers.most_liked_get);

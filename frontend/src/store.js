@@ -6,7 +6,8 @@ import { composeWithDevTools } from "redux-devtools-extension";
 import rootReducer from "./reducers";
 
 const storeEnhancer = composeWithDevTools(
-  applyMiddleware(logger, promise(), reduxThunk)
+  // applyMiddleware(logger, promise(), reduxThunk)
+  applyMiddleware(promise(), reduxThunk)
 );
 const store = createStore(rootReducer, storeEnhancer);
 

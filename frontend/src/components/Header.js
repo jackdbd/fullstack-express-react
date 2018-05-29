@@ -20,6 +20,7 @@ const Header = props => {
             <a
               href="https://github.com/jackdbd/fullstack-express-react"
               target="_blank"
+              rel="noopener noreferrer"
             >
               Code
             </a>

@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import { fetchUsers } from "../actions";
+import Spinner from "react-spinkit";
+import { fetchUsers, likeUser } from "../actions";
 import User from "../components/User";
 
 class UserList extends Component {
@@ -9,11 +10,11 @@ class UserList extends Component {
     this.props.fetchUsers();
   }
 
-  renderUser(props) {
+  renderUser(user, key) {
     const isLiked = Math.random() > 0.5 ? true : false;
     return (
-      <li key={props.username}>
-        <User {...props} isLiked={isLiked} />
+      <li key={key}>
+        <User {...user} isLiked={isLiked} likeUser={this.props.likeUser} />
       </li>
     );
   }
@@ -21,7 +22,13 @@ class UserList extends Component {
   render() {
     return (
       <div>
-        <ul>{this.props.users.map(user => this.renderUser(user))}</ul>
+        {this.props.isLoadingData ? (
+          <Spinner name="pacman" color="#ffff00" />
+        ) : (
+          <ul>
+            {this.props.users.map((user, key) => this.renderUser(user, key))}
+          </ul>
+        )}
       </div>
     );
   }
@@ -32,8 +39,10 @@ class UserList extends Component {
   available to this container component via props.
 */
 function mapStateToProps(state) {
+  const { users, isLoadingData } = state.apiStore;
   const props = {
-    users: state.apiStore.users
+    users,
+    isLoadingData
   };
   return props;
 }
@@ -45,7 +54,7 @@ function mapStateToProps(state) {
 */
 function mapDispatchToProps(dispatch) {
   // object destructuring: {fetchUsers (prop): fetchUsers (action creator)}
-  return bindActionCreators({ fetchUsers }, dispatch);
+  return bindActionCreators({ fetchUsers, likeUser }, dispatch);
 }
 
 /*

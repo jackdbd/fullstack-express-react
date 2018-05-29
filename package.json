@@ -24,7 +24,10 @@
     "verbose": true,
     "collectCoverage": true,
     "testEnvironment": "node",
-    "testPathIgnorePatterns": ["/node_modules/", "/frontend/"],
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/frontend/"
+    ],
     "moduleFileExtensions": [
       "js",
       "json"
@@ -38,6 +41,7 @@
     "body-parser": "^1.18.3",
     "cookie-parser": "^1.4.3",
     "cookie-session": "^2.0.0-beta.3",
+    "cors": "^2.8.4",
     "dotenv": "^5.0.1",
     "express": "^4.16.3",
     "express-session": "^1.15.6",

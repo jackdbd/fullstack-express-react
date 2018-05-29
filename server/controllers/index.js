@@ -240,11 +240,11 @@ exports.user_id_delete = async function(req, res) {
 exports.most_liked_get = async function(req, res) {
   let docs;
   try {
-    docs = await User.find({}, ["username", "numLikes"], {
+    docs = await User.find({}, ["username", "numLikes", "_id"], {
       sort: { numLikes: -1 }
     });
     return res.json(
-      docs.map(d => ({ username: d.username, numLikes: d.numLikes }))
+      docs.map(d => ({ username: d.username, numLikes: d.numLikes, id: d._id }))
     );
   } catch (err) {
     return res.json({ error: err });
