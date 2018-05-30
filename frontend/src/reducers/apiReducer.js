@@ -1,8 +1,20 @@
-import { FETCH_USERS, LIKE_USER, UNLIKE_USER } from "../actions";
+import {
+  FETCH_USERS,
+  LIKE_USER,
+  UNLIKE_USER,
+  LOGIN_USER,
+  LOGOUT_USER
+} from "../actions";
 
 export const initialState = {
   users: [],
-  isLoadingData: false
+  isLoadingData: false,
+  token: false,
+  currentUser: {
+    id: "",
+    username: "",
+    numLikes: 0
+  }
 };
 
 function updateAndSortUsers(usersOld, doc) {
@@ -58,9 +70,31 @@ export const apiReducer = (state = initialState, action) => {
         users
       };
     case `${LIKE_USER}_REJECTED`:
-      console.log("TODO: LIKE/UNLIKE USER_REJECTED", action.payload);
+    case `${UNLIKE_USER}_REJECTED`:
+      console.log("TODO: LIKE/UNLIKE USER_REJECTED");
       return {
         ...state
+      };
+    case `${LOGIN_USER}_FULFILLED`:
+      const { username, numLikes, token } = action.payload.data;
+      return {
+        ...state,
+        currentUser: {
+          username,
+          numLikes
+        },
+        token
+      };
+    case `${LOGIN_USER}_REJECTED`:
+      console.log("TODO: LOGIN_USER_REJECTED", action.payload);
+      return {
+        ...state,
+        token: false
+      };
+    case LOGOUT_USER:
+      return {
+        ...state,
+        token: false
       };
     default:
       return state;

@@ -1,7 +1,9 @@
 const express = require("express");
 const { authOrRedirect } = require("../middlewares");
 const controllers = require("../controllers");
+// const swaggerUi = require('swagger-ui-express');
 
+// const swaggerDocument = require('./api-docs-swagger.json');
 const router = express.Router();
 
 /*
@@ -19,11 +21,10 @@ router.put(
   controllers.me_update_password_put
 );
 router.get("/user/:id", controllers.user_id_get);
-// TODO
-// router.put("/user/:id/like", authOrRedirect, controllers.user_id_like_put);
-router.put("/user/:id/like", controllers.user_id_like_put);
+router.put("/user/:id/like", authOrRedirect, controllers.user_id_like_put);
 router.put("/user/:id/unlike", authOrRedirect, controllers.user_id_unlike_put);
 router.delete("/user/:id", controllers.user_id_delete);
 router.get("/most-liked", controllers.most_liked_get);
+// router.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 module.exports = router;

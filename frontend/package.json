@@ -12,16 +12,6 @@
     "ci": "npm-run-all --sequential test:verbose coverage",
     "dev": "concurrently \"npm run start\" \"cd .. && npm run start\""
   },
-  "proxy": {
-    "/most-liked": {
-      "target": "http://localhost:5000/",
-      "secure": false
-    },
-    "/user/5b0d11ebb57406213d1c567f/like": {
-      "target": "http://localhost:5000/",
-      "secure": false
-    }
-  },
   "dependencies": {
     "axios": "^0.18.0",
     "materialize-css": "^0.100.2",

@@ -47,9 +47,12 @@ exports.login_post = async function(req, res) {
     return res.status(HttpStatus.BAD_REQUEST).json({ error: err });
   }
   if (user) {
-    const message = "You are now logged in";
+    const { username, numLikes } = user;
+    const message = `Hi ${username} (${numLikes} likes) You are now logged in!`;
     const token = user.generateAuthToken();
-    return res.status(HttpStatus.OK).json({ message, token, auth: true });
+    return res
+      .status(HttpStatus.OK)
+      .json({ message, token, username, numLikes, auth: true });
   } else {
     return res
       .status(HttpStatus.NOT_FOUND)

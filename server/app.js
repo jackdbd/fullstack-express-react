@@ -20,7 +20,7 @@ app.use(cors());
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use("/api", apiRoutes);
 app.use("/", accessRoutes);
-app.use("/", apiRoutes); // TODO: change "/" to "/api"
 
 module.exports = app;

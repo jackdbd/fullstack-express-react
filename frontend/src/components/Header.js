@@ -14,7 +14,18 @@ const Header = props => {
             <Link to="/me">Me</Link>
           </li>
           <li>
-            <Link to="/login">Login</Link>
+            {props.token ? (
+              <Link
+                to="/"
+                onClick={() => {
+                  props.logoutUser();
+                }}
+              >
+                Logout
+              </Link>
+            ) : (
+              <Link to="/login">Login</Link>
+            )}
           </li>
           <li>
             <a
