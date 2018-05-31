@@ -3,6 +3,29 @@ const HttpStatus = require("http-status-codes");
 
 const NOT_FOUND = "RESOURCE NOT FOUND";
 
+async function loginUserWithToken(user, res) {
+  if (user) {
+    const { username, numLikes } = user;
+    try {
+      const message = `Hi ${username} (${numLikes} likes) You are now logged in!`;
+      const token = await user.generateAuthToken();
+      return res.status(HttpStatus.OK).json({ message, token, auth: true });
+    } catch (err) {
+      // TODO: instead of sending the stack trace to the client, I should write
+      // it to an error.log with winston
+      message =
+        "You probably forgot to set the environment variable to sign the JWT token";
+      return res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json({ error: { message, stack_trace: err.stack } });
+    }
+  } else {
+    return res
+      .status(HttpStatus.NOT_FOUND)
+      .json({ error: { message: NOT_FOUND } });
+  }
+}
+
 /** POST /signup
  * Register anew user and generate an authentication token (e.g. JSON Web Token)
  * for the client to include in future requests with the server.
@@ -19,16 +42,7 @@ exports.signup_post = async function(req, res) {
     // to log it with a "dev" logger level.
     return res.status(HttpStatus.BAD_REQUEST).json({ error: err });
   }
-  if (user) {
-    const message = "You are now registered and logged in";
-    const token = user.generateAuthToken();
-    return res.status(HttpStatus.OK).json({ token, auth: true });
-  } else {
-    // TODO: is that possible to NOT have a user at this point?
-    return res
-      .status(HttpStatus.NOT_FOUND)
-      .json({ error: { message: NOT_FOUND } });
-  }
+  return await loginUserWithToken(user, res);
 };
 
 /** POST /login
@@ -46,18 +60,7 @@ exports.login_post = async function(req, res) {
   } catch (err) {
     return res.status(HttpStatus.BAD_REQUEST).json({ error: err });
   }
-  if (user) {
-    const { username, numLikes } = user;
-    const message = `Hi ${username} (${numLikes} likes) You are now logged in!`;
-    const token = user.generateAuthToken();
-    return res
-      .status(HttpStatus.OK)
-      .json({ message, token, username, numLikes, auth: true });
-  } else {
-    return res
-      .status(HttpStatus.NOT_FOUND)
-      .json({ error: { message: NOT_FOUND } });
-  }
+  return await loginUserWithToken(user, res);
 };
 
 /** GET /me

@@ -128,15 +128,19 @@ UserSchema.statics.comparePasswordWithHash = async function(password, hash) {
   return isMatch;
 };
 
-UserSchema.methods.generateAuthToken = function() {
+UserSchema.methods.generateAuthToken = async function() {
   const user = this;
   const payload = { _id: user._id.toHexString(), access: "auth" };
   const secret = process.env.JWT_SECRET;
   const options = {
     expiresIn: 3600 // 1 hour
   };
-  const token = jwt.sign(payload, secret, options).toString();
-  return token;
+  try {
+    token = jwt.sign(payload, secret, options).toString();
+    return token;
+  } catch (err) {
+    throw err;
+  }
 };
 
 const User = mongoose.model(collection, UserSchema);
