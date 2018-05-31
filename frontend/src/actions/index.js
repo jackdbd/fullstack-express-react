@@ -93,8 +93,8 @@ export function unlikeUser(id, token) {
 // }
 
 export function loginUser(email, username, password) {
-  // const url = `${HOST}:${PORT}/login`;
-  const url = "/login";
+  // const url = `${HOST}:${PORT}/api/login`;
+  const url = "/api/login";
   const data = JSON.stringify({ email, username, password });
   const config = {
     headers: { "Content-Type": "application/json" }

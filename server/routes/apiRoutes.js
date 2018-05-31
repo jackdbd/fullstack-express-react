@@ -1,5 +1,5 @@
 const express = require("express");
-const { authOrRedirect } = require("../middlewares");
+const { passport, authOrRedirect } = require("../middlewares");
 const controllers = require("../controllers");
 // const swaggerUi = require('swagger-ui-express');
 
@@ -26,5 +26,16 @@ router.put("/user/:id/unlike", authOrRedirect, controllers.user_id_unlike_put);
 router.delete("/user/:id", controllers.user_id_delete);
 router.get("/most-liked", controllers.most_liked_get);
 // router.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+router.post("/signup", controllers.signup_post);
+// If POST /api/login fails, we redirect to GET /login (it's handled by React
+// Router. Note: it's GET /login, not GET /api/login)
+router.post(
+  "/login",
+  passport.authenticate("local", {
+    failureRedirect: "/login"
+  }),
+  controllers.login_post
+);
 
 module.exports = router;

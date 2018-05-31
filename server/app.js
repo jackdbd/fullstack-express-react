@@ -6,7 +6,7 @@ const cors = require("cors");
 const session = require("express-session");
 const passport = require("passport");
 const logger = require("morgan");
-const { accessRoutes, apiRoutes } = require("./routes");
+const { apiRoutes } = require("./routes");
 
 const app = express();
 app.use(logger("dev"));
@@ -21,6 +21,5 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use("/api", apiRoutes);
-app.use("/", accessRoutes);
 
 module.exports = app;
