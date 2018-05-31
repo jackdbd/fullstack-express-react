@@ -1,10 +1,16 @@
+/**
+ * Passport authentication middleware.
+ *
+ * @module middlewares/passport
+ */
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const { User } = require("../models/user");
 
+const LocalStrategyOptions = {};
+
 passport.use(
-  new LocalStrategy({}, function(username, password, done) {
-    // TODO: check if we need to distinguish between user and false in .then
+  new LocalStrategy(LocalStrategyOptions, function(username, password, done) {
     User.getUserByCredentials(username, password)
       .then(user => {
         done(null, user);

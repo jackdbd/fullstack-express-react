@@ -1,3 +1,8 @@
+/**
+ * Redirect middlewares.
+ *
+ * @module middlewares/redirect
+ */
 const HttpStatus = require("http-status-codes");
 const jwt = require("jsonwebtoken");
 
@@ -5,9 +10,7 @@ function authOrRedirect(req, res, next) {
   const token = req.headers["x-access-token"];
   const secret = process.env.JWT_SECRET;
 
-  // let message
   if (!token) {
-    // message = 'No token provided'
     // res.status(HttpStatus.FORBIDDEN).json({ auth: false, message })
     return res.redirect("/login");
   }
