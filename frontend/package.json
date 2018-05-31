@@ -12,6 +12,14 @@
     "ci": "npm-run-all --sequential test:verbose coverage",
     "dev": "concurrently \"npm run start\" \"cd .. && npm run start\""
   },
+  "proxy": {
+    "/api/*": {
+      "target": "http://localhost:5000"
+    },
+    "/login": {
+      "target": "http://localhost:5000"
+    }
+  },
   "dependencies": {
     "axios": "^0.18.0",
     "materialize-css": "^0.100.2",

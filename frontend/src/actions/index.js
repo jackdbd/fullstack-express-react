@@ -6,8 +6,8 @@ export const UNLIKE_USER = "unlike user: decrement numLikes in db";
 export const LOGIN_USER = "logs a user in";
 export const LOGOUT_USER = "logs a user out";
 
-const HOST = process.env.HOST || "http://localhost";
-const PORT = process.env.PORT || 5000;
+// const HOST = process.env.HOST || "http://localhost";
+// const PORT = process.env.PORT || 5000;
 
 /* 
   What is the best way to connect the React frontend with the Express backend in
@@ -25,7 +25,8 @@ const PORT = process.env.PORT || 5000;
 // });
 
 export function fetchUsers() {
-  const url = `${HOST}:${PORT}/api/most-liked`;
+  // const url = `${HOST}:${PORT}/api/most-liked`;
+  const url = "/api/most-liked";
   return function(dispatch) {
     dispatch({
       type: FETCH_USERS,
@@ -35,7 +36,8 @@ export function fetchUsers() {
 }
 
 export function likeUser(id, token) {
-  const url = `${HOST}:${PORT}/api/user/${id}/like`;
+  // const url = `${HOST}:${PORT}/api/user/${id}/like`;
+  const url = `/api/user/${id}/like`;
   const data = JSON.stringify({ id: id });
   const config = {
     headers: {
@@ -53,7 +55,8 @@ export function likeUser(id, token) {
 }
 
 export function unlikeUser(id, token) {
-  const url = `${HOST}:${PORT}/api/user/${id}/unlike`;
+  // const url = `${HOST}:${PORT}/api/user/${id}/unlike`;
+  const url = `/api/user/${id}/unlike`;
   const data = JSON.stringify({ id: id });
   const config = {
     headers: {
@@ -90,7 +93,8 @@ export function unlikeUser(id, token) {
 // }
 
 export function loginUser(email, username, password) {
-  const url = `${HOST}:${PORT}/login`;
+  // const url = `${HOST}:${PORT}/login`;
+  const url = "/login";
   const data = JSON.stringify({ email, username, password });
   const config = {
     headers: { "Content-Type": "application/json" }
