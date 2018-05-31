@@ -14,10 +14,13 @@ if (NODE_ENV === "production") {
   /*
     Express will serve the index.html file if it doesn't recognize a requested
     route (so the route will be handled by React Route DOM).
+    Important: double check the path when you change project structure!
   */
   const path = require("path");
   app.get("*", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"));
+    res.sendFile(
+      path.resolve(__dirname, "..", "frontend", "build", "index.html")
+    );
   });
 }
 
