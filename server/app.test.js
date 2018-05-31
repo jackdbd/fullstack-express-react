@@ -32,8 +32,8 @@ function createTestJson() {
   return jsonDoc;
 }
 
-describe("POST /signup - Register a new user", () => {
-  const endpoint = "/signup";
+describe("POST /api/signup - Register a new user", () => {
+  const endpoint = "/api//signup";
 
   it("should be possible to register with username, email and password", async function(done) {
     const jsonDoc = createTestJson();
@@ -77,8 +77,8 @@ describe("POST /signup - Register a new user", () => {
   });
 });
 
-describe("POST /login - Login existing user", () => {
-  const endpoint = "/login";
+describe("POST /api/login - Login existing user", () => {
+  const endpoint = "/api/login";
 
   it("should redirect (302) to /login when trying to login without a password", async function(done) {
     const user = await User.findOne();
@@ -98,7 +98,7 @@ describe("POST /login - Login existing user", () => {
     const jsonDoc = createTestJson();
     await deleteUserIfAny(jsonDoc.username);
     await request(app)
-      .post("/signup")
+      .post("/api/signup")
       .send(jsonDoc);
     const res = await request(app)
       .post(endpoint)
@@ -108,8 +108,8 @@ describe("POST /login - Login existing user", () => {
   });
 });
 
-describe("GET /me - Get​ ​the​ ​currently​ ​logged​ ​in​ ​user​ ​information", () => {
-  const endpoint = "/me";
+describe("GET /api/me - Get​ ​the​ ​currently​ ​logged​ ​in​ ​user​ ​information", () => {
+  const endpoint = "/api/me";
 
   it("should redirect (302) to /login when token is not included", async function(done) {
     const res = await request(app)
@@ -123,7 +123,7 @@ describe("GET /me - Get​ ​the​ ​currently​ ​logged​ ​in​ ​us
     const jsonDoc = createTestJson();
     await deleteUserIfAny(jsonDoc.username);
     const res1 = await request(app)
-      .post("/signup")
+      .post("/api/signup")
       .send(jsonDoc);
     const { token } = res1.body;
     const res2 = await request(app)
@@ -139,8 +139,8 @@ describe("GET /me - Get​ ​the​ ​currently​ ​logged​ ​in​ ​us
   });
 });
 
-describe("PUT /me/update-password - Update the password of the authenticated user", () => {
-  const endpoint = "/me";
+describe("PUT /api/me/update-password - Update the password of the authenticated user", () => {
+  const endpoint = "/api/me";
 
   it("should redirect (302) to /login when token is not included", async function(done) {
     const jsonDoc = createTestJson();
@@ -156,7 +156,7 @@ describe("PUT /me/update-password - Update the password of the authenticated use
     const jsonDoc = createTestJson();
     await deleteUserIfAny(jsonDoc.username);
     const res1 = await request(app)
-      .post("/signup")
+      .post("/api/signup")
       .send(jsonDoc);
     const { token } = res1.body;
 
@@ -180,8 +180,8 @@ describe("PUT /me/update-password - Update the password of the authenticated use
   });
 });
 
-describe("GET /most-liked - List​ ​users​ ​in​ ​a​ ​most​ ​liked​ ​to​ ​least​ ​liked", () => {
-  const endpoint = "/most-liked";
+describe("GET /api/most-liked - List​ ​users​ ​in​ ​a​ ​most​ ​liked​ ​to​ ​least​ ​liked", () => {
+  const endpoint = "/api/most-liked";
 
   it("should return HTTP OK (200)", done => {
     request(app)
@@ -202,8 +202,8 @@ describe("GET /most-liked - List​ ​users​ ​in​ ​a​ ​most​ ​l
   });
 });
 
-describe("GET /user/:id - Get​ ​the​ ​user​ with the specified ID", () => {
-  const endpoint = "/user";
+describe("GET /api/user/:id - Get​ ​the​ ​user​ with the specified ID", () => {
+  const endpoint = "/api/user";
 
   it("should return OK (200) for an existing user", async function(done) {
     const user = await User.findOne();
@@ -224,8 +224,8 @@ describe("GET /user/:id - Get​ ​the​ ​user​ with the specified ID", ()
   });
 });
 
-describe("PUT /user/:id/like - Like a user", () => {
-  const endpoint = "/user";
+describe("PUT /api/user/:id/like - Like a user", () => {
+  const endpoint = "/api/user";
 
   it("should redirect (302) to /login when token is not included", async function(done) {
     const user = await User.findOne();
@@ -240,7 +240,7 @@ describe("PUT /user/:id/like - Like a user", () => {
     const jsonDoc = createTestJson();
     await deleteUserIfAny(jsonDoc.username);
     const res1 = await request(app)
-      .post("/signup")
+      .post("/api/signup")
       .send(jsonDoc);
     const { token } = res1.body;
 
@@ -259,8 +259,8 @@ describe("PUT /user/:id/like - Like a user", () => {
   });
 });
 
-describe("PUT /user/:id/unlike - Unlike a user", () => {
-  const endpoint = "/user";
+describe("PUT /api/user/:id/unlike - Unlike a user", () => {
+  const endpoint = "/api/user";
 
   it("should redirect (302) to /login when token is not included", async function(done) {
     const user = await User.findOne();
@@ -276,7 +276,7 @@ describe("PUT /user/:id/unlike - Unlike a user", () => {
     const jsonDoc = createTestJson();
     await deleteUserIfAny(jsonDoc.username);
     const res1 = await request(app)
-      .post("/signup")
+      .post("/api/signup")
       .send(jsonDoc);
     const { token } = res1.body;
 
@@ -304,7 +304,7 @@ describe("PUT /user/:id/unlike - Unlike a user", () => {
     const jsonDoc = createTestJson();
     await deleteUserIfAny(jsonDoc.username);
     const res1 = await request(app)
-      .post("/signup")
+      .post("/api/signup")
       .send(jsonDoc);
     const { token } = res1.body;
 
