@@ -2,9 +2,10 @@ const bcrypt = require("bcryptjs");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 
+const name = "User";
 const collection = "users";
 const UserSchema = new mongoose.Schema({
-  _id: { type: mongoose.Schema.ObjectId, auto: true },
+  _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
   username: {
     type: String,
     required: true,
@@ -26,6 +27,9 @@ const UserSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  relationships: [
+    { type: mongoose.Schema.Types.ObjectId, ref: "Relationship" }
+  ],
   created_at: {
     type: Date,
     default: Date.now
@@ -143,7 +147,7 @@ UserSchema.methods.generateAuthToken = async function() {
   }
 };
 
-const User = mongoose.model(collection, UserSchema);
+const User = mongoose.model(name, UserSchema, collection);
 
 async function createUser(obj) {
   try {
