@@ -36,12 +36,14 @@ router.get("/most-liked", mostLiked.get);
 // router.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 router.post("/signup", access.signup);
-// I really don't understand how this redirect works with the React frontend.
+/*
+  Try to authenticate with a POST (username, password) on /api/login.
+  If unsuccessful, redirect on /login (it's a GET which should NOT be catched by any Express route, but handled by React
+  router instead).
+*/
 router.post(
   "/login",
-  passport.authenticate("local", {
-    failureRedirect: "/"
-  }),
+  passport.authenticate("local", { failureRedirect: "/login" }),
   access.login
 );
 

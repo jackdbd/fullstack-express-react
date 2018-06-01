@@ -1,5 +1,7 @@
 const { User, createUser, updateUser } = require("../models/user");
 const HttpStatus = require("http-status-codes");
+const logger = require("../config/winston");
+
 const NOT_FOUND = "RESOURCE NOT FOUND";
 
 /**
@@ -12,13 +14,16 @@ const NOT_FOUND = "RESOURCE NOT FOUND";
  * @param {object} res Express HTTP response.
  */
 async function get(req, res) {
-  // console.log('req.locals.userId', res.locals.userId)
   const id = res.locals.userId;
+  logger.debug(`res.locals.userId: ${id}`);
+  logger.debug(`Trying to find in DB the currently authenticated user`);
   let user;
   try {
     user = await User.getUserById(id);
   } catch (err) {
-    return res.status(HttpStatus.BAD_REQUEST).json({ error: err });
+    message = `There was an issue in finding user ${id}`;
+    logger.error(err);
+    return res.status(HttpStatus.BAD_REQUEST).json({ error: message });
   }
   if (user) {
     const { username, numLikes } = user;
@@ -41,13 +46,17 @@ async function get(req, res) {
  */
 async function updatePassword(req, res) {
   const { newPassword } = req.body;
-  // console.log('req.locals.userId', res.locals.userId)
   const id = res.locals.userId;
+  logger.debug(`res.locals.userId: ${id}`);
+  logger.debug(`Trying to find in DB the currently authenticated user`);
   let user;
+  let message;
   try {
     user = await User.getUserById(id);
   } catch (err) {
-    return res.status(HttpStatus.BAD_REQUEST).json({ error: err });
+    logger.error(err);
+    message = `There was an issue in finding user ${id}`;
+    return res.status(HttpStatus.BAD_REQUEST).json({ error: message });
   }
   if (!user) {
     return res
@@ -59,11 +68,14 @@ async function updatePassword(req, res) {
 
   try {
     const newUser = await updateUser(user.id, obj);
-    const message = `User ${id} updated the password`;
+    logger.debug(`User ${id} updated the password`);
+    message = "You updated your password";
     //  console.log('user.password\n', user.password, '\nobj.password\n', obj.password, '\nnewUser.password\n', newUser.password)
     return res.status(HttpStatus.OK).json({ message });
   } catch (err) {
-    return res.status(HttpStatus.BAD_REQUEST).json({ error: err });
+    logger.error(err);
+    message = "There was an issue in updating the user data";
+    return res.status(HttpStatus.BAD_REQUEST).json({ error: message });
   }
 }
 

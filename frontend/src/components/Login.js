@@ -9,8 +9,7 @@ const Login = props => {
   // TODO: get them from the form
   const email = "giacomo1984@gmail.com";
   const username = "giacomo1984";
-  const password = "pass1984giacomo";
-  // const password = "WRONG_PASSWORD";
+  const password = "bankai1984";
 
   return (
     <div>

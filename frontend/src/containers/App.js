@@ -42,7 +42,14 @@ class App extends Component {
     } = this.props;
     const headerProps = { token, logoutUser };
     const loginProps = { loginUser };
-    const userListProps = { users, isLoadingData, likeUser, unlikeUser, token };
+    const userListProps = {
+      users,
+      currentUser,
+      isLoadingData,
+      likeUser,
+      unlikeUser,
+      token
+    };
 
     return (
       <div className="container">
@@ -69,7 +76,13 @@ class App extends Component {
               <Route
                 exact
                 path="/login"
-                render={() => <Login {...loginProps} />}
+                render={() =>
+                  !this.props.token ? (
+                    <Login {...loginProps} />
+                  ) : (
+                    <Redirect to="/" />
+                  )
+                }
               />
               {/* Catch all URLs that didn't match any route */}
               <Route render={props => <NoMatch {...props} />} />
