@@ -14,13 +14,15 @@ import User from "../components/User";
 import Login from "../components/Login";
 import UserList from "../components/UserList";
 
-const NoMatch = (props) => {
+const NoMatch = props => {
   return (
     <div>
-      <h3>No match for <strong>{props.location.pathname}</strong> (404)</h3>
+      <h3>
+        No match for <strong>{props.location.pathname}</strong> (404)
+      </h3>
     </div>
-  )
-}
+  );
+};
 
 export class App extends Component {
   componentDidMount() {
@@ -41,6 +43,7 @@ export class App extends Component {
     const headerProps = { token, logoutUser };
     const loginProps = { loginUser };
     const userListProps = { users, isLoadingData, likeUser, unlikeUser, token };
+    console.log(userListProps);
 
     return (
       <div className="container">
@@ -70,7 +73,7 @@ export class App extends Component {
                 render={() => <Login {...loginProps} />}
               />
               {/* Catch all URLs that didn't match any route */}
-              <Route render={(props) => <NoMatch {...props}/>} />
+              <Route render={props => <NoMatch {...props} />} />
             </Switch>
           </div>
         </BrowserRouter>
