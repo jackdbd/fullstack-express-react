@@ -7,9 +7,10 @@ const Login = props => {
   const className = "btn waves-effect waves-light";
 
   // TODO: get them from the form
-  const email = "email8021@gmail.com";
-  const username = "user8021";
-  const password = "pass8021";
+  const email = "giacomo1984@gmail.com";
+  const username = "giacomo1984";
+  const password = "pass1984giacomo";
+  // const password = "WRONG_PASSWORD";
 
   return (
     <div>

@@ -16,7 +16,9 @@ const UserList = props => {
   if (props.isLoadingData) {
     return <Spinner name="pacman" color="#ffff00" />;
   } else {
-    const { users, userProps } = props;
+    const { users, likeUser, unlikeUser, token } = props;
+    const userProps = { likeUser, unlikeUser, token };
+    // const { users, userProps } = props;
     if (users) {
       return (
         <ul>{users.map((user, key) => renderUser(user, key, userProps))}</ul>
@@ -31,21 +33,7 @@ const UserList = props => {
   }
 };
 
-//   return (
-//     <div>
-//       {isLoadingData ? (
-//         <Spinner name="pacman" color="#ffff00" />
-//       ) : (
-//         <ul>
-//           {users.map((user, key) => renderUser(user, key, userProps))}
-//         </ul>
-//       )}
-//     </div>
-//   );
-
-// }
-
-// class UserLista extends Component {
+// class UserList extends Component {
 //   renderUser(user, key, userProps) {
 //     const props = { ...user, ...userProps };
 //     const isLiked = Math.random() > 0.5 ? true : false;

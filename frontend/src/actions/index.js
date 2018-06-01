@@ -6,8 +6,8 @@ export const UNLIKE_USER = "unlike user: decrement numLikes in db";
 export const LOGIN_USER = "logs a user in";
 export const LOGOUT_USER = "logs a user out";
 
-// const HOST = process.env.HOST || "http://localhost";
-// const PORT = process.env.PORT || 5000;
+const HOST = process.env.HOST || "http://localhost";
+const PORT = process.env.PORT || 5000;
 
 /* 
   What is the best way to connect the React frontend with the Express backend in
@@ -72,25 +72,6 @@ export function unlikeUser(id, token) {
     });
   };
 }
-
-// export function fetchMe(id, token){
-//   const url = `${HOST}:${PORT}/api/me`;
-//   const data = JSON.stringify({ id: id });
-//   const config = {
-//     headers: {
-//       "Content-Type": "application/json",
-//       "x-access-token": token
-//     }
-//   };
-//   const request = axios.get(url, data, config);
-//   return function(dispatch) {
-//     dispatch({
-//       type: FETCH_ME,
-//       payload: request
-//     });
-//   };
-
-// }
 
 export function loginUser(email, username, password) {
   // const url = `${HOST}:${PORT}/api/login`;
