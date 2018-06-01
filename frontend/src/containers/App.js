@@ -24,7 +24,7 @@ const NoMatch = props => {
   );
 };
 
-export class App extends Component {
+class App extends Component {
   componentDidMount() {
     this.props.fetchUsers();
   }
@@ -43,7 +43,6 @@ export class App extends Component {
     const headerProps = { token, logoutUser };
     const loginProps = { loginUser };
     const userListProps = { users, isLoadingData, likeUser, unlikeUser, token };
-    console.log(userListProps);
 
     return (
       <div className="container">
@@ -114,4 +113,6 @@ function mapDispatchToProps(dispatch) {
   Promote the "dumb", redux-unaware, presentational component, to a "smart",
   redux-aware, container component.
 */
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+const AppWithRedux = connect(mapStateToProps, mapDispatchToProps)(App);
+
+export { App, AppWithRedux };
