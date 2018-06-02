@@ -16,7 +16,7 @@
  *
  */
 const express = require("express");
-const { passport, authOrRedirect } = require("../middlewares");
+const { passport, verifyAuth } = require("../middlewares");
 const user = require("../controllers/user");
 const me = require("../controllers/me");
 const mostLiked = require("../controllers/most-liked");
@@ -26,11 +26,11 @@ const access = require("../controllers/access");
 // const swaggerDocument = require('./api-docs-swagger.json');
 const router = express.Router();
 
-router.get("/me", authOrRedirect, me.get);
-router.put("/me/update-password", authOrRedirect, me.updatePassword);
+router.get("/me", verifyAuth, me.get);
+router.put("/me/update-password", verifyAuth, me.updatePassword);
 router.get("/user/:id", user.get);
-router.put("/user/:id/like", authOrRedirect, user.like);
-router.put("/user/:id/unlike", authOrRedirect, user.unlike);
+router.put("/user/:id/like", verifyAuth, user.like);
+router.put("/user/:id/unlike", verifyAuth, user.unlike);
 router.delete("/user/:id", user.deleteId);
 router.get("/most-liked", mostLiked.get);
 // router.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));

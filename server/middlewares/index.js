@@ -1,7 +1,7 @@
 const passport = require("./passport");
-const { authOrRedirect } = require("./redirects");
+const { verifyAuth } = require("./authorize");
 
 module.exports = {
   passport,
-  authOrRedirect
+  verifyAuth
 };

@@ -87,7 +87,7 @@ export const apiReducer = (state = initialState, action) => {
         token
       };
     case `${LOGIN_USER}_REJECTED`:
-      console.log("TODO: LOGIN_USER_REJECTED", action.payload);
+      console.log("TODO: LOGIN_USER_REJECTED");
       return {
         ...state,
         token: false,

@@ -47,6 +47,7 @@ class App extends Component {
       users: this.props.users,
       isLoadingData: this.props.isLoadingData
     };
+    const { id, username, numLikes } = this.props.currentUser;
 
     return (
       <div className="container">
@@ -66,8 +67,9 @@ class App extends Component {
                   this.props.token ? (
                     <User
                       {...authProps}
-                      username={this.props.currentUser.username}
-                      numLikes={this.props.currentUser.numLikes}
+                      id={id}
+                      username={username}
+                      numLikes={numLikes}
                     />
                   ) : (
                     <Redirect to="/login" />
