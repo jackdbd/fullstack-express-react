@@ -30,25 +30,22 @@ class App extends Component {
   }
 
   render() {
-    const {
-      users,
-      isLoadingData,
-      likeUser,
-      unlikeUser,
-      loginUser,
-      logoutUser,
-      token,
-      currentUser
-    } = this.props;
-    const headerProps = { token, logoutUser };
-    const loginProps = { loginUser };
+    const headerProps = {
+      token: this.props.token,
+      logoutUser: this.props.logoutUser
+    };
+    const loginProps = {
+      loginUser: this.props.loginUser
+    };
+    const authProps = {
+      token: this.props.token,
+      likeUser: this.props.likeUser,
+      unlikeUser: this.props.unlikeUser
+    };
     const userListProps = {
-      users,
-      currentUser,
-      isLoadingData,
-      likeUser,
-      unlikeUser,
-      token
+      ...authProps,
+      users: this.props.users,
+      isLoadingData: this.props.isLoadingData
     };
 
     return (
@@ -67,7 +64,11 @@ class App extends Component {
                 path="/me"
                 render={props =>
                   this.props.token ? (
-                    <User {...currentUser} />
+                    <User
+                      {...authProps}
+                      username={this.props.currentUser.username}
+                      numLikes={this.props.currentUser.numLikes}
+                    />
                   ) : (
                     <Redirect to="/login" />
                   )

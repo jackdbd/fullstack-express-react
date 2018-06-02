@@ -16,20 +16,12 @@ const renderIcon = toggle => {
 };
 
 const Like = props => {
-  const {
-    currentUser,
-    numLikes,
-    isLiked,
-    likeUser,
-    unlikeUser,
-    id,
-    token
-  } = props;
+  const { numLikes, isLiked, likeUser, unlikeUser, id, token } = props;
   const className = "btn waves-effect waves-light";
   return (
     <div>
       <Button
-        isLiked={isLiked}
+        isLiked={true}
         className={className}
         type="submit"
         name="action"
@@ -38,7 +30,6 @@ const Like = props => {
         Likes: {numLikes}
         {renderIcon(isLiked)}
       </Button>
-      <span>you are {currentUser.username}</span>
       <Button type="submit" name="action" onClick={() => unlikeUser(id, token)}>
         Unlike
       </Button>

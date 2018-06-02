@@ -18,7 +18,7 @@ const NOT_FOUND = "RESOURCE NOT FOUND";
 async function get(req, res) {
   let user;
   let message;
-  const { id } = req.params.id;
+  const { id } = req.params;
   logger.debug(`Trying to find user ${id}`);
   try {
     user = await User.getUserById(id);

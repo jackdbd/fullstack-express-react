@@ -6,8 +6,8 @@ export const UNLIKE_USER = "unlike user: decrement numLikes in db";
 export const LOGIN_USER = "logs a user in";
 export const LOGOUT_USER = "logs a user out";
 
-const HOST = process.env.HOST || "http://localhost";
-const PORT = process.env.PORT || 5000;
+// const HOST = process.env.HOST || "http://localhost";
+// const PORT = process.env.PORT || 5000;
 
 /* 
   What is the best way to connect the React frontend with the Express backend in
