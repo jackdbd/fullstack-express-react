@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
+const logger = require("../config/winston");
 
 const name = "User";
 const collection = "users";
@@ -51,6 +52,7 @@ UserSchema.pre("save", function(next) {
         // pass the error to the next middleware function
         return next(err);
       } else {
+        // logger.info(hash);
         // don't commit to the database the user's password, but its hash
         doc.password = hash;
         next();
@@ -106,6 +108,7 @@ UserSchema.statics.getUserByCredentials = async function(username, password) {
   let user;
   try {
     user = await User.getUserByUsername(username);
+    logger.debug("getUserByCredentials: user found");
   } catch (err) {
     throw err;
   }
@@ -123,13 +126,15 @@ UserSchema.statics.getUserByCredentials = async function(username, password) {
 };
 
 UserSchema.statics.comparePasswordWithHash = async function(password, hash) {
-  let isMatch;
   try {
-    isMatch = await bcrypt.compare(password, hash);
+    const isMatch = await bcrypt.compare(password, hash);
+    logger.debug(
+      `comparePasswordWithHash: ${password} matches ${hash} ? ${isMatch} `
+    );
+    return isMatch;
   } catch (err) {
     throw err;
   }
-  return isMatch;
 };
 
 UserSchema.methods.generateAuthToken = async function() {

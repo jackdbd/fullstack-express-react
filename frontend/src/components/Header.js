@@ -7,14 +7,17 @@ const Header = props => {
     <nav>
       <div className={className}>
         <Link to="/" className="brand-logo">
-          Logo
+          Fullstack Express React
         </Link>
         <ul className="right">
           <li>
             <Link to="/me">Me</Link>
           </li>
+          {/* Signup / Logout (and back to / ) */}
           <li>
-            {props.token ? (
+            {!props.token ? (
+              <Link to="/signup">Signup</Link>
+            ) : (
               <Link
                 to="/"
                 onClick={() => {
@@ -23,8 +26,21 @@ const Header = props => {
               >
                 Logout
               </Link>
-            ) : (
+            )}
+          </li>
+          {/* Login / Logout (and back to / ) */}
+          <li>
+            {!props.token ? (
               <Link to="/login">Login</Link>
+            ) : (
+              <Link
+                to="/"
+                onClick={() => {
+                  props.logoutUser();
+                }}
+              >
+                Logout
+              </Link>
             )}
           </li>
           <li>

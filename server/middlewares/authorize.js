@@ -20,7 +20,7 @@ const verify = (token, secret) => {
 };
 
 function verifyAuth(req, res, next) {
-  logger.debug("authOrRedirect middleware");
+  logger.debug("verifyAuth middleware");
   const token = req.headers["x-access-token"];
   const secret = process.env.JWT_SECRET;
 

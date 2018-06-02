@@ -18,7 +18,7 @@ const UserList = props => {
     const { users, currentUser, likeUser, unlikeUser, token } = props;
     const userProps = { currentUser, likeUser, unlikeUser, token };
     // const { users, userProps } = props;
-    if (users) {
+    if (users.length) {
       return (
         <ul>{users.map((user, key) => renderUser(user, key, userProps))}</ul>
       );

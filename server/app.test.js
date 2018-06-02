@@ -32,6 +32,16 @@ function createTestJson() {
   return jsonDoc;
 }
 
+function createTestJson2() {
+  jsonDoc = {
+    username: "some_other_username",
+    email: "some_other_email@some_provider.com",
+    password: "some_other_password",
+    numLikes: 5
+  };
+  return jsonDoc;
+}
+
 describe("POST /api/signup - Register a new user", () => {
   const endpoint = "/api//signup";
 
@@ -80,17 +90,23 @@ describe("POST /api/signup - Register a new user", () => {
 describe("POST /api/login - Login existing user", () => {
   const endpoint = "/api/login";
 
-  it("should redirect (302) to / when trying to login without a password", async function(done) {
+  it("should redirect to /login when trying to login without a password", async function(done) {
+    const jsonDoc = createTestJson();
+    await deleteUserIfAny(jsonDoc.username);
+    await request(app)
+      .post("/api/signup")
+      .send(jsonDoc);
+
     const user = await User.findOne();
-    const jsonDoc = {
+    const jsonDoc1 = {
       username: user.username,
       email: user.email
     };
     const res = await request(app)
       .post(endpoint)
-      .send(jsonDoc)
+      .send(jsonDoc1)
       .expect(HttpStatus.MOVED_TEMPORARILY)
-      .expect("Location", "/");
+      .expect("Location", "/login");
     done();
   });
 
@@ -111,11 +127,10 @@ describe("POST /api/login - Login existing user", () => {
 describe("GET /api/me - Get​ ​the​ ​currently​ ​logged​ ​in​ ​user​ ​information", () => {
   const endpoint = "/api/me";
 
-  it("should redirect (302) to /login when token is not included", async function(done) {
+  it("should not allow to go to /me when token is not included", async function(done) {
     const res = await request(app)
       .get(endpoint)
-      .expect(HttpStatus.MOVED_TEMPORARILY)
-      .expect("Location", "/login");
+      .expect(HttpStatus.UNAUTHORIZED);
     done();
   });
 
@@ -142,13 +157,12 @@ describe("GET /api/me - Get​ ​the​ ​currently​ ​logged​ ​in​ �
 describe("PUT /api/me/update-password - Update the password of the authenticated user", () => {
   const endpoint = "/api/me";
 
-  it("should redirect (302) to /login when token is not included", async function(done) {
+  it("should not allow to update the password when the token is not included", async function(done) {
     const jsonDoc = createTestJson();
     const res = await request(app)
       .put(`${endpoint}/update-password`)
       .send(jsonDoc)
-      .expect(HttpStatus.MOVED_TEMPORARILY)
-      .expect("Location", "/login");
+      .expect(HttpStatus.UNAUTHORIZED);
     done();
   });
 
@@ -197,7 +211,7 @@ describe("GET /api/most-liked - List​ ​users​ ​in​ ​a​ ​most​ 
     const results = res.body;
     const first = results[0];
     const last = results[results.length - 1];
-    expect(first.numLikes).toBeGreaterThan(last.numLikes);
+    expect(first.numLikes).toBeGreaterThanOrEqual(last.numLikes);
     done();
   });
 });
@@ -215,7 +229,6 @@ describe("GET /api/user/:id - Get​ ​the​ ​user​ with the specified ID"
   });
 
   it("should return BAD_REQUEST (400) when specifying an invalid id", done => {
-    // const id = "4b0977ba76d8c83817f451ed";
     const id = "INVALID_ID";
     request(app)
       .get(`${endpoint}/${id}`)
@@ -227,16 +240,15 @@ describe("GET /api/user/:id - Get​ ​the​ ​user​ with the specified ID"
 describe("PUT /api/user/:id/like - Like a user", () => {
   const endpoint = "/api/user";
 
-  it("should redirect (302) to /login when token is not included", async function(done) {
+  it("should not allow to like a user when the token is not included", async function(done) {
     const user = await User.findOne();
     const res = await request(app)
       .put(`${endpoint}/${user.id}/like`)
-      .expect(HttpStatus.MOVED_TEMPORARILY)
-      .expect("Location", "/login");
+      .expect(HttpStatus.UNAUTHORIZED);
     done();
   });
 
-  it("should increment numLikes by 1", async function(done) {
+  it("should not be possible to like yourself", async function(done) {
     const jsonDoc = createTestJson();
     await deleteUserIfAny(jsonDoc.username);
     const res1 = await request(app)
@@ -249,11 +261,35 @@ describe("PUT /api/user/:id/like - Like a user", () => {
       .put(`${endpoint}/${user.id}/like`)
       .set("x-access-token", token)
       .expect("Content-Type", /json/)
-      .expect(HttpStatus.OK);
-    // console.log(res2.body)
+      .expect(HttpStatus.BAD_REQUEST);
 
-    const oldNum = res2.body.old.numLikes;
-    const newNum = res2.body.new.numLikes;
+    expect(res2.body.error).toBe("You cannot like yourself!");
+    done();
+  });
+
+  it("should increment numLikes by 1", async function(done) {
+    const jsonDoc1 = createTestJson();
+    await deleteUserIfAny(jsonDoc1.username);
+    const res1 = await request(app)
+      .post("/api/signup")
+      .send(jsonDoc1);
+
+    const jsonDoc2 = createTestJson2();
+    await deleteUserIfAny(jsonDoc2.username);
+    const res2 = await request(app)
+      .post("/api/signup")
+      .send(jsonDoc2);
+    const { token } = res2.body;
+
+    const user1 = await User.getUserByUsername(jsonDoc1.username);
+    const res = await request(app)
+      .put(`${endpoint}/${user1.id}/like`)
+      .set("x-access-token", token)
+      .expect("Content-Type", /json/)
+      .expect(HttpStatus.OK);
+
+    const oldNum = res.body.old.numLikes;
+    const newNum = res.body.new.numLikes;
     expect(newNum).toBe(oldNum + 1);
     done();
   });
@@ -262,12 +298,11 @@ describe("PUT /api/user/:id/like - Like a user", () => {
 describe("PUT /api/user/:id/unlike - Unlike a user", () => {
   const endpoint = "/api/user";
 
-  it("should redirect (302) to /login when token is not included", async function(done) {
+  it("should not allow to unlike a user when token is not included", async function(done) {
     const user = await User.findOne();
     const res = await request(app)
       .put(`${endpoint}/${user.id}/unlike`)
-      .expect(HttpStatus.MOVED_TEMPORARILY)
-      .expect("Location", "/login");
+      .expect(HttpStatus.UNAUTHORIZED);
     done();
   });
 
@@ -285,7 +320,7 @@ describe("PUT /api/user/:id/unlike - Unlike a user", () => {
       email: { $ne: jsonDoc.email },
       numLikes: { $gt: 0 }
     });
-    // console.log(jsonDoc.email, user2.email)
+    console.log(jsonDoc.email, user2.email);
     const res2 = await request(app)
       .put(`${endpoint}/${user2.id}/unlike`)
       .set("x-access-token", token)
@@ -300,25 +335,28 @@ describe("PUT /api/user/:id/unlike - Unlike a user", () => {
   });
 
   it("should NOT decrement numLikes by 1 if numLikes is 0", async function(done) {
-    // register a new user to get a token
-    const jsonDoc = createTestJson();
-    await deleteUserIfAny(jsonDoc.username);
+    const jsonDoc1 = createTestJson();
+    await deleteUserIfAny(jsonDoc1.username);
     const res1 = await request(app)
       .post("/api/signup")
-      .send(jsonDoc);
-    const { token } = res1.body;
+      .send(jsonDoc1);
 
-    const user2 = await User.findOne({ numLikes: { $eq: 0 } });
-    // console.log(jsonDoc.email, user2.email)
+    const jsonDoc2 = createTestJson2();
+    await deleteUserIfAny(jsonDoc2.username);
     const res2 = await request(app)
-      .put(`${endpoint}/${user2.id}/unlike`)
+      .post("/api/signup")
+      .send(jsonDoc2);
+    const { token } = res2.body;
+
+    const user = await User.findOne({ numLikes: { $eq: 0 } });
+    const res = await request(app)
+      .put(`${endpoint}/${user.id}/unlike`)
       .set("x-access-token", token)
       .expect("Content-Type", /json/)
       .expect(HttpStatus.OK);
-    // console.log(res2.body)
 
-    const oldNum = res2.body.old.numLikes;
-    const newNum = res2.body.new.numLikes;
+    const oldNum = res.body.old.numLikes;
+    const newNum = res.body.new.numLikes;
     expect(oldNum).toBe(0);
     expect(newNum).toBe(0);
     done();

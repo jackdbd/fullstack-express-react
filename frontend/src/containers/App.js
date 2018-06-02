@@ -6,13 +6,15 @@ import {
   fetchUsers,
   likeUser,
   unlikeUser,
+  signupUser,
   loginUser,
   logoutUser
 } from "../actions";
 import Header from "../components/Header";
 import User from "../components/User";
-import Login from "../components/Login";
 import UserList from "../components/UserList";
+import UserSignup from "../components/UserSignup";
+import UserLogin from "../components/UserLogin";
 
 const NoMatch = props => {
   return (
@@ -34,9 +36,6 @@ class App extends Component {
       token: this.props.token,
       logoutUser: this.props.logoutUser
     };
-    const loginProps = {
-      loginUser: this.props.loginUser
-    };
     const authProps = {
       token: this.props.token,
       likeUser: this.props.likeUser,
@@ -50,14 +49,41 @@ class App extends Component {
     const { id, username, numLikes } = this.props.currentUser;
 
     return (
-      <div className="container">
-        <BrowserRouter>
+      <BrowserRouter>
+        <div className="container">
           <div>
             <Header {...headerProps} />
             <Switch>
               <Route
                 exact
                 path="/"
+                render={() => <UserList {...userListProps} />}
+              />
+              <Route
+                exact
+                path="/signup"
+                render={() =>
+                  !this.props.token ? (
+                    <UserSignup signupUser={this.props.signupUser} />
+                  ) : (
+                    <Redirect to="/me" />
+                  )
+                }
+              />
+              <Route
+                exact
+                path="/login"
+                render={() =>
+                  !this.props.token ? (
+                    <UserLogin loginUser={this.props.loginUser} />
+                  ) : (
+                    <Redirect to="/me" />
+                  )
+                }
+              />
+              <Route
+                exact
+                path="/most-liked"
                 render={() => <UserList {...userListProps} />}
               />
               <Route
@@ -76,23 +102,12 @@ class App extends Component {
                   )
                 }
               />
-              <Route
-                exact
-                path="/login"
-                render={() =>
-                  !this.props.token ? (
-                    <Login {...loginProps} />
-                  ) : (
-                    <Redirect to="/" />
-                  )
-                }
-              />
               {/* Catch all URLs that didn't match any route */}
               <Route render={props => <NoMatch {...props} />} />
             </Switch>
           </div>
-        </BrowserRouter>
-      </div>
+        </div>
+      </BrowserRouter>
     );
   }
 }
@@ -120,7 +135,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   // object destructuring: {fetchUsers (prop): fetchUsers (action creator)}
   return bindActionCreators(
-    { fetchUsers, likeUser, unlikeUser, loginUser, logoutUser },
+    { fetchUsers, likeUser, unlikeUser, signupUser, loginUser, logoutUser },
     dispatch
   );
 }

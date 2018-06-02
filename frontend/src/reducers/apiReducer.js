@@ -2,6 +2,7 @@ import {
   FETCH_USERS,
   LIKE_USER,
   UNLIKE_USER,
+  SIGNUP_USER,
   LOGIN_USER,
   LOGOUT_USER
 } from "../actions";
@@ -43,7 +44,7 @@ function updateAndSortUsers(usersOld, doc) {
 }
 
 export const apiReducer = (state = initialState, action) => {
-  let users;
+  let users, username, numLikes, id, token;
   switch (action.type) {
     case `${FETCH_USERS}_FULFILLED`:
       users = action.payload.data;
@@ -75,16 +76,43 @@ export const apiReducer = (state = initialState, action) => {
       return {
         ...state
       };
-    case `${LOGIN_USER}_FULFILLED`:
-      const { username, numLikes, id, token } = action.payload.data;
+    case `${SIGNUP_USER}_FULFILLED`:
+      username = action.payload.data.username;
+      numLikes = action.payload.data.numLikes;
+      id = action.payload.data.id;
+      token = action.payload.data.token;
+      // users = updateAndSortUsers(state.users, {username, id, numLikes});
       return {
         ...state,
+        token,
+        isLoadingData: false,
         currentUser: {
           username,
           numLikes,
           id
-        },
-        token
+        }
+      };
+    case `${SIGNUP_USER}_REJECTED`:
+      console.log("SIGNUP REJECTED");
+      return {
+        ...state,
+        isLoadingData: false,
+        token: false,
+        currentUser: initialState.currentUser
+      };
+    case `${LOGIN_USER}_FULFILLED`:
+      username = action.payload.data.username;
+      numLikes = action.payload.data.numLikes;
+      id = action.payload.data.id;
+      token = action.payload.data.token;
+      return {
+        ...state,
+        token,
+        currentUser: {
+          username,
+          numLikes,
+          id
+        }
       };
     case `${LOGIN_USER}_REJECTED`:
       console.log("TODO: LOGIN_USER_REJECTED");

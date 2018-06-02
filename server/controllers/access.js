@@ -69,7 +69,7 @@ async function signup(req, res) {
       parse the MongoDB error?)
     */
     message = `User ${req.body.username} cannot signup`;
-    return res.status(HttpStatus.BAD_REQUEST).json({ error: message });
+    return res.status(HttpStatus.BAD_REQUEST).json({ message, error: err });
   }
   try {
     await loginUserWithToken(user, res);

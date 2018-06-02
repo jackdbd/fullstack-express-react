@@ -6,10 +6,10 @@
  *
  * For the Express middlewares, we could use the following syntax, which uses
  * the middleware function for every request specified in this module:
- * router.use(authOrRedirect);
+ * router.use(verifyAuth);
  *
  * However, I prefer to be more explicit and specify the middleware each time:
- * router.get("/me", authOrRedirect, controllers.me_get);
+ * router.get("/me", verifyAuth, controllers.me_get);
  *
  * @module routes/apiRoutes
  * @see app
@@ -38,8 +38,8 @@ router.get("/most-liked", mostLiked.get);
 router.post("/signup", access.signup);
 /*
   Try to authenticate with a POST (username, password) on /api/login.
-  If unsuccessful, redirect on /login (it's a GET which should NOT be catched by any Express route, but handled by React
-  router instead).
+  If unsuccessful, redirect on /login (it's a GET which should NOT be catched by
+  any Express route, but handled by React router instead).
 */
 router.post(
   "/login",
