@@ -937,9 +937,9 @@ dot-prop@^4.1.0:
   dependencies:
     is-obj "^1.0.0"
 
-dotenv@^5.0.1:
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-5.0.1.tgz#a5317459bd3d79ab88cff6e44057a6a3fbb1fcef"
+dotenv@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-6.0.0.tgz#24e37c041741c5f4b25324958ebbc34bca965935"
 
 duplexer3@^0.1.4:
   version "0.1.4"
@@ -2662,9 +2662,9 @@ mongodb@3.0.8:
   dependencies:
     mongodb-core "3.0.8"
 
-mongoose-dummy@1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/mongoose-dummy/-/mongoose-dummy-1.0.3.tgz#acc45b16a4eb588175201f49d55626fe99ca5ace"
+mongoose-dummy@1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/mongoose-dummy/-/mongoose-dummy-1.0.5.tgz#2196682f6ffcbfd3a76678b239318a9e8c9276f4"
   dependencies:
     faker "4.1.0"
     flat "4.0.0"
