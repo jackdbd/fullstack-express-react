@@ -14,33 +14,40 @@ import User from "../components/User";
 import Login from "../components/Login";
 import UserList from "../components/UserList";
 
-const NoMatch = (props) => {
+const NoMatch = props => {
   return (
     <div>
-      <h3>No match for <strong>{props.location.pathname}</strong> (404)</h3>
+      <h3>
+        No match for <strong>{props.location.pathname}</strong> (404)
+      </h3>
     </div>
-  )
-}
+  );
+};
 
-export class App extends Component {
+class App extends Component {
   componentDidMount() {
     this.props.fetchUsers();
   }
 
   render() {
-    const {
-      users,
-      isLoadingData,
-      likeUser,
-      unlikeUser,
-      loginUser,
-      logoutUser,
-      token,
-      currentUser
-    } = this.props;
-    const headerProps = { token, logoutUser };
-    const loginProps = { loginUser };
-    const userListProps = { users, isLoadingData, likeUser, unlikeUser, token };
+    const headerProps = {
+      token: this.props.token,
+      logoutUser: this.props.logoutUser
+    };
+    const loginProps = {
+      loginUser: this.props.loginUser
+    };
+    const authProps = {
+      token: this.props.token,
+      likeUser: this.props.likeUser,
+      unlikeUser: this.props.unlikeUser
+    };
+    const userListProps = {
+      ...authProps,
+      users: this.props.users,
+      isLoadingData: this.props.isLoadingData
+    };
+    const { id, username, numLikes } = this.props.currentUser;
 
     return (
       <div className="container">
@@ -58,7 +65,12 @@ export class App extends Component {
                 path="/me"
                 render={props =>
                   this.props.token ? (
-                    <User {...currentUser} />
+                    <User
+                      {...authProps}
+                      id={id}
+                      username={username}
+                      numLikes={numLikes}
+                    />
                   ) : (
                     <Redirect to="/login" />
                   )
@@ -67,10 +79,16 @@ export class App extends Component {
               <Route
                 exact
                 path="/login"
-                render={() => <Login {...loginProps} />}
+                render={() =>
+                  !this.props.token ? (
+                    <Login {...loginProps} />
+                  ) : (
+                    <Redirect to="/" />
+                  )
+                }
               />
               {/* Catch all URLs that didn't match any route */}
-              <Route render={(props) => <NoMatch {...props}/>} />
+              <Route render={props => <NoMatch {...props} />} />
             </Switch>
           </div>
         </BrowserRouter>
@@ -111,4 +129,6 @@ function mapDispatchToProps(dispatch) {
   Promote the "dumb", redux-unaware, presentational component, to a "smart",
   redux-aware, container component.
 */
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+const AppWithRedux = connect(mapStateToProps, mapDispatchToProps)(App);
+
+export { App, AppWithRedux };

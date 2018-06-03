@@ -80,7 +80,7 @@ describe("POST /api/signup - Register a new user", () => {
 describe("POST /api/login - Login existing user", () => {
   const endpoint = "/api/login";
 
-  it("should redirect (302) to /login when trying to login without a password", async function(done) {
+  it("should redirect (302) to / when trying to login without a password", async function(done) {
     const user = await User.findOne();
     const jsonDoc = {
       username: user.username,
@@ -90,7 +90,7 @@ describe("POST /api/login - Login existing user", () => {
       .post(endpoint)
       .send(jsonDoc)
       .expect(HttpStatus.MOVED_TEMPORARILY)
-      .expect("Location", "/login");
+      .expect("Location", "/");
     done();
   });
 

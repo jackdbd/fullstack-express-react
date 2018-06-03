@@ -73,25 +73,6 @@ export function unlikeUser(id, token) {
   };
 }
 
-// export function fetchMe(id, token){
-//   const url = `${HOST}:${PORT}/api/me`;
-//   const data = JSON.stringify({ id: id });
-//   const config = {
-//     headers: {
-//       "Content-Type": "application/json",
-//       "x-access-token": token
-//     }
-//   };
-//   const request = axios.get(url, data, config);
-//   return function(dispatch) {
-//     dispatch({
-//       type: FETCH_ME,
-//       payload: request
-//     });
-//   };
-
-// }
-
 export function loginUser(email, username, password) {
   // const url = `${HOST}:${PORT}/api/login`;
   const url = "/api/login";

@@ -1,6 +1,13 @@
 const { User, createUser, updateUser, deleteUser } = require("../models/user");
 const HttpStatus = require("http-status-codes");
+const logger = require("../config/winston");
+
 const NOT_FOUND = "RESOURCE NOT FOUND";
+
+/* 
+  TODO: double-check if the HTTP status code make sense, especially BAD REQUEST
+  VS INTERNAL SERVER ERROR.
+*/
 
 /**
  * Get​ ​the​ ​user​ with the specified ID.
@@ -10,15 +17,21 @@ const NOT_FOUND = "RESOURCE NOT FOUND";
  */
 async function get(req, res) {
   let user;
+  let message;
+  const { id } = req.params;
+  logger.debug(`Trying to find user ${id}`);
   try {
-    user = await User.getUserById(req.params.id);
+    user = await User.getUserById(id);
   } catch (err) {
-    return res.status(HttpStatus.BAD_REQUEST).json({ error: err });
+    logger.error(err);
+    message = `There was an issue in finding user ${id}`;
+    return res.status(HttpStatus.BAD_REQUEST).json({ error: message });
   }
   if (user) {
     const { username, numLikes } = user;
     return res.status(HttpStatus.OK).json({ username, numLikes });
   } else {
+    logger.debug(`User ${id} not found`);
     return res
       .status(HttpStatus.NOT_FOUND)
       .json({ error: { message: NOT_FOUND } });
@@ -32,11 +45,24 @@ async function get(req, res) {
  * @param {object} res Express HTTP response.
  */
 async function like(req, res) {
+  const { id } = req.params;
+  const authUserId = res.locals.userId;
+  logger.debug(`Auth user ${authUserId}`);
+  logger.debug(`Trying to find user ${id}`);
+
+  let message;
+  if (id === authUserId) {
+    message = "You cannot like yourself!";
+    return res.status(HttpStatus.BAD_REQUEST).json({ error: message });
+  }
+
   let doc;
   try {
-    doc = await User.getUserById(req.params.id);
+    doc = await User.getUserById(id);
   } catch (err) {
-    return res.status(HttpStatus.BAD_REQUEST).json({ error: err });
+    logger.error(err);
+    message = `There was an issue in finding user ${id}`;
+    return res.status(HttpStatus.BAD_REQUEST).json({ error: message });
   }
   if (!doc) {
     return res
@@ -47,9 +73,7 @@ async function like(req, res) {
   const newObj = Object.assign({}, doc._doc, {
     numLikes: doc._doc.numLikes + 1
   });
-  const message = `User ${doc.id} numLikes: ${doc.numLikes} -> ${
-    newObj.numLikes
-  }`;
+  message = `User ${doc.id} numLikes: ${doc.numLikes} -> ${newObj.numLikes}`;
 
   try {
     const newDoc = await updateUser(doc.id, newObj);
@@ -66,9 +90,20 @@ async function like(req, res) {
  * @param {object} res Express HTTP response.
  */
 async function unlike(req, res) {
+  const { id } = req.params;
+  const authUserId = res.locals.userId;
+  logger.debug(`Auth user ${authUserId}`);
+  logger.debug(`Trying to find user ${id}`);
+
+  let message;
+  if (id === authUserId) {
+    message = "You cannot unlike yourself!";
+    return res.status(HttpStatus.BAD_REQUEST).json({ error: message });
+  }
+
   let doc;
   try {
-    doc = await User.getUserById(req.params.id);
+    doc = await User.getUserById(id);
   } catch (err) {
     return res.status(HttpStatus.BAD_REQUEST).json({ error: err });
   }
@@ -81,9 +116,7 @@ async function unlike(req, res) {
   const newValue = doc._doc.numLikes - 1;
   const numLikes = newValue > 0 ? newValue : 0;
   const newObj = Object.assign({}, doc._doc, { numLikes });
-  const message = `User ${doc.id} numLikes: ${doc.numLikes} -> ${
-    newObj.numLikes
-  }`;
+  message = `User ${doc.id} numLikes: ${doc.numLikes} -> ${newObj.numLikes}`;
 
   try {
     const newDoc = await updateUser(doc.id, newObj);
@@ -101,22 +134,28 @@ async function unlike(req, res) {
  */
 async function deleteId(req, res) {
   const { id } = req.params;
+  logger.debug(`Trying to find user ${id}`);
   let user;
   try {
     user = await User.getUserById(id);
   } catch (err) {
+    logger.error(err);
     res.status(HttpStatus.BAD_REQUEST).json({ error: err });
   }
   if (!user) {
     res.status(HttpStatus.NOT_FOUND).json({ error: { message: NOT_FOUND } });
   }
 
+  logger.debug(`User ${id} found. Trying to remove it from DB`);
+  let message;
   try {
     const doc = await deleteUser(id);
-    const message = `User ${id} deleted from the database`;
+    message = `User ${id} remove from the database`;
     res.status(HttpStatus.OK).json({ message });
   } catch (err) {
-    res.json({ error: err });
+    logger.error(err);
+    message = `There was an issue removing the user ${id}`;
+    res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: message });
   }
 }
 

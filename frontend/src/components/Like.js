@@ -21,7 +21,7 @@ const Like = props => {
   return (
     <div>
       <Button
-        isLiked={isLiked}
+        isLiked={true}
         className={className}
         type="submit"
         name="action"

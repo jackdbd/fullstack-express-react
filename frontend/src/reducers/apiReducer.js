@@ -76,20 +76,22 @@ export const apiReducer = (state = initialState, action) => {
         ...state
       };
     case `${LOGIN_USER}_FULFILLED`:
-      const { username, numLikes, token } = action.payload.data;
+      const { username, numLikes, id, token } = action.payload.data;
       return {
         ...state,
         currentUser: {
           username,
-          numLikes
+          numLikes,
+          id
         },
         token
       };
     case `${LOGIN_USER}_REJECTED`:
-      console.log("TODO: LOGIN_USER_REJECTED", action.payload);
+      console.log("TODO: LOGIN_USER_REJECTED");
       return {
         ...state,
-        token: false
+        token: false,
+        currentUser: initialState.currentUser
       };
     case LOGOUT_USER:
       return {

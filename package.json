@@ -16,7 +16,7 @@
     "fake": "node scripts/fake.js",
     "test": "jest --detectOpenHandles",
     "test:watch": "jest --watch",
-    "ci": "jest --detectOpenHandles && cd frontend && yarn add react-scripts && yarn run test",
+    "ci": "jest --detectOpenHandles --runInBand && cd frontend && yarn add react-scripts && yarn run test",
     "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix frontend && npm run build --prefix frontend"
   },
   "jest": {
@@ -37,12 +37,13 @@
     }
   },
   "dependencies": {
+    "app-root-path": "^2.0.1",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
     "cookie-parser": "^1.4.3",
     "cookie-session": "^2.0.0-beta.3",
     "cors": "^2.8.4",
-    "dotenv": "^5.0.1",
+    "dotenv": "^6.0.0",
     "express": "^4.16.3",
     "express-session": "^1.15.6",
     "http-status-codes": "^1.3.0",
@@ -52,13 +53,14 @@
     "passport": "^0.4.0",
     "passport-google-oauth20": "^1.0.0",
     "passport-http": "^0.3.0",
-    "passport-local": "^1.0.0"
+    "passport-local": "^1.0.0",
+    "winston": "^2.4.2"
   },
   "devDependencies": {
     "jest": "23.1.0",
-    "mongoose-dummy": "1.0.2",
+    "mongoose-dummy": "1.0.3",
     "nodemon": "1.17.5",
-    "prettier": "1.12.1",
+    "prettier": "1.13.3",
     "supertest": "3.1.0"
   }
 }
