@@ -1,9 +1,13 @@
 require("dotenv").load();
 const request = require("supertest");
 const HttpStatus = require("http-status-codes");
+const logger = require("./config/winston");
 const mongoose = require("mongoose");
 const { User, createUser, deleteUser } = require("./models/user");
 const app = require("./app");
+
+// turn off logging with winston during the tests
+logger.transports["consoleLogger"].silent = true;
 
 beforeAll(() => {
   console.log("Start test suite. Connect to MongoDB");
