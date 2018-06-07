@@ -1,4 +1,9 @@
 const { User, createUser, updateUser, deleteUser } = require("../models/user");
+const {
+  Relationship,
+  createRelationship,
+  deleteRelationship
+} = require("../models/relationship");
 const HttpStatus = require("http-status-codes");
 const logger = require("../config/winston");
 
@@ -70,6 +75,23 @@ async function like(req, res) {
       .json({ error: { message: NOT_FOUND } });
   }
 
+  const obj = {
+    source: authUserId,
+    destination: id,
+    category: "like"
+  };
+
+  try {
+    const rel = await createRelationship(obj);
+    logger.debug(`Create relationship: ${id} likes ${doc.id}`);
+  } catch (err) {
+    return res.status(HttpStatus.BAD_REQUEST).json({ error: err.stack });
+  }
+
+  /*
+    numLikes could be a virtual property of a user. It's computed summing up all
+    occurrences where he is a "destination" of a "like" relationship.
+  */
   const newObj = Object.assign({}, doc._doc, {
     numLikes: doc._doc.numLikes + 1
   });
@@ -111,6 +133,23 @@ async function unlike(req, res) {
     return res
       .status(HttpStatus.NOT_FOUND)
       .json({ error: { message: NOT_FOUND } });
+  }
+
+  const authUser = await User.getUserById(authUserId);
+
+  const relationships = await Relationship.find({
+    source: authUserId,
+    destination: id
+  });
+  if (relationships.length) {
+    try {
+      const rel = await deleteRelationship(relationships[0]._id);
+    } catch (err) {
+      return res.status(HttpStatus.BAD_REQUEST).json({ error: err.stack });
+    }
+  } else {
+    message = `User ${authUserId} has no relationship with User ${id}`;
+    return res.status(HttpStatus.NOT_FOUND).json({ error: { message } });
   }
 
   const newValue = doc._doc.numLikes - 1;

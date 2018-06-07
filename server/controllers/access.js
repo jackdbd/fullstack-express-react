@@ -14,7 +14,7 @@ const NOT_FOUND = "RESOURCE NOT FOUND";
 async function loginUserWithToken(user, res) {
   let message;
   if (user) {
-    const { username, email, numLikes } = user;
+    const { username, email, numLikes, relationships } = user;
     logger.debug(`Trying to generate AUTH token for ${username}`);
     try {
       const token = await user.generateAuthToken();
@@ -25,6 +25,7 @@ async function loginUserWithToken(user, res) {
         username,
         email,
         numLikes,
+        relationships,
         token,
         id: user._id,
         auth: true

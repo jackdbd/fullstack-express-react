@@ -14,7 +14,8 @@ export const initialState = {
   currentUser: {
     id: "",
     username: "",
-    numLikes: 0
+    numLikes: 0,
+    relationships: []
   }
 };
 
@@ -44,7 +45,7 @@ function updateAndSortUsers(usersOld, doc) {
 }
 
 export const apiReducer = (state = initialState, action) => {
-  let users, username, numLikes, id, token;
+  let users, username, numLikes, id, relationships, token;
   switch (action.type) {
     case `${FETCH_USERS}_FULFILLED`:
       users = action.payload.data;
@@ -80,6 +81,7 @@ export const apiReducer = (state = initialState, action) => {
       username = action.payload.data.username;
       numLikes = action.payload.data.numLikes;
       id = action.payload.data.id;
+      relationships = action.payload.data.relationships;
       token = action.payload.data.token;
       // users = updateAndSortUsers(state.users, {username, id, numLikes});
       return {
@@ -89,7 +91,8 @@ export const apiReducer = (state = initialState, action) => {
         currentUser: {
           username,
           numLikes,
-          id
+          id,
+          relationships
         }
       };
     case `${SIGNUP_USER}_REJECTED`:
@@ -104,6 +107,7 @@ export const apiReducer = (state = initialState, action) => {
       username = action.payload.data.username;
       numLikes = action.payload.data.numLikes;
       id = action.payload.data.id;
+      relationships = action.payload.data.relationships;
       token = action.payload.data.token;
       return {
         ...state,
@@ -111,7 +115,8 @@ export const apiReducer = (state = initialState, action) => {
         currentUser: {
           username,
           numLikes,
-          id
+          id,
+          relationships
         }
       };
     case `${LOGIN_USER}_REJECTED`:

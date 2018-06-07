@@ -3,7 +3,8 @@ import Spinner from "react-spinkit";
 import User from "./User";
 
 const renderUser = (user, key, userProps) => {
-  const props = { ...user, ...userProps };
+  const isLiked = userProps.currentUser.relationships.includes(user.id);
+  const props = { ...user, ...userProps, isLiked };
   return (
     <li key={key}>
       <User {...props} />

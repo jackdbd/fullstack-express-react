@@ -26,8 +26,10 @@ async function get(req, res) {
     return res.status(HttpStatus.BAD_REQUEST).json({ error: message });
   }
   if (user) {
-    const { username, numLikes } = user;
-    return res.status(HttpStatus.OK).json({ username, numLikes });
+    const { username, numLikes, relationships } = user;
+    return res
+      .status(HttpStatus.OK)
+      .json({ username, numLikes, relationships });
   } else {
     return res
       .status(HttpStatus.NOT_FOUND)

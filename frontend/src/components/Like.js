@@ -7,12 +7,12 @@ const Button = styled.button`
   color: ${props => (props.isLiked ? "#f5f5f5" : "#d50000")} !important;
 `;
 
-const renderIcon = toggle => {
-  if (toggle) {
-    return <i className="material-icons right">favorite</i>;
-  } else {
-    return <i className="material-icons right">favorite_border</i>;
-  }
+const renderIcon = isLiked => {
+  return isLiked ? (
+    <i className="material-icons right">favorite</i>
+  ) : (
+    <i className="material-icons right">favorite_border</i>
+  );
 };
 
 const Like = props => {
@@ -21,17 +21,23 @@ const Like = props => {
   return (
     <div>
       <Button
-        isLiked={true}
         className={className}
+        isLiked={isLiked}
         type="submit"
         name="action"
         onClick={() => likeUser(id, token)}
       >
-        Likes: {numLikes}
-        {renderIcon(isLiked)}
+        Like{renderIcon(isLiked)}
       </Button>
-      <Button type="submit" name="action" onClick={() => unlikeUser(id, token)}>
-        Unlike
+
+      <Button
+        className={className}
+        isLiked={!isLiked}
+        type="submit"
+        name="action"
+        onClick={() => unlikeUser(id, token)}
+      >
+        Unlike{renderIcon(!isLiked)}
       </Button>
     </div>
   );

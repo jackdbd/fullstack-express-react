@@ -7,6 +7,7 @@ const User = props => {
       <div className="card">
         <div className="card-content">
           <h1>{props.username}</h1>
+          <p>Likes: {props.numLikes}</p>
         </div>
         <div className="card-action grey lighten-4">
           <Like {...props} />

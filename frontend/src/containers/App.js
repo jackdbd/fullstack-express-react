@@ -43,6 +43,7 @@ class App extends Component {
     };
     const userListProps = {
       ...authProps,
+      currentUser: this.props.currentUser,
       users: this.props.users,
       isLoadingData: this.props.isLoadingData
     };
