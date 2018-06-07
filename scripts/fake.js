@@ -7,7 +7,7 @@ function* fakeUsersGenerator(numFakes) {
   let i = 0;
   while (i < numFakes) {
     const fakeObj = dummy(User, {
-      ignore: ["_id", "created_at", "__v"],
+      ignore: ["_id", "relationships", "created_at", "__v"],
       returnDate: true
     });
     i++;
@@ -36,18 +36,18 @@ async function run() {
   const groupA = docs.slice(0, pivot);
   const groupB = docs.slice(pivot, docs.length);
 
-  let rel;
-  for (let doc1 of groupA) {
-    for (let doc2 of groupB) {
-      rel = await new Relationship({
-        source: doc1._id,
-        destination: doc2._id,
-        category: "like"
-      });
-      await rel.save();
-      console.log(`Rel.: ${rel.id} (${doc1._id} -> ${doc2._id})`);
-    }
-  }
+  // let rel;
+  // for (let doc1 of groupA) {
+  //   for (let doc2 of groupB) {
+  //     rel = await new Relationship({
+  //       source: doc1._id,
+  //       destination: doc2._id,
+  //       category: "like"
+  //     });
+  //     await rel.save();
+  //     console.log(`Rel.: ${rel.id} (${doc1._id} -> ${doc2._id})`);
+  //   }
+  // }
 
   /*
     Now that we have users and relationships, we can retrieve the information
