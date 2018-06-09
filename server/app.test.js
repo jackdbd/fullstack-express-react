@@ -3,7 +3,12 @@ const request = require("supertest");
 const HttpStatus = require("http-status-codes");
 const logger = require("./config/winston");
 const mongoose = require("mongoose");
-const { User, createUser, deleteUser } = require("./models/user");
+const {
+  User,
+  createUser,
+  deleteUser,
+  deleteUserIfAny
+} = require("./models/user");
 const app = require("./app");
 
 // turn off logging with winston during the tests
@@ -18,14 +23,6 @@ afterAll(() => {
   console.log("All tests done. Disconnect from MongoDB");
   mongoose.disconnect();
 });
-
-async function deleteUserIfAny(username) {
-  const user = await User.getUserByUsername(username);
-  if (user) {
-    const deletedUser = await deleteUser(user._id);
-    // console.log('deleted user', deletedUser)
-  }
-}
 
 function createTestJson() {
   jsonDoc = {
@@ -46,7 +43,7 @@ function createTestJson2() {
   return jsonDoc;
 }
 
-describe("POST /api/signup - Register a new user", () => {
+describe.skip("POST /api/signup - Register a new user", () => {
   const endpoint = "/api//signup";
 
   it("should be possible to register with username, email and password", async function(done) {
@@ -91,7 +88,7 @@ describe("POST /api/signup - Register a new user", () => {
   });
 });
 
-describe("POST /api/login - Login existing user", () => {
+describe.skip("POST /api/login - Login existing user", () => {
   const endpoint = "/api/login";
 
   it("should redirect to /login when trying to login without a password", async function(done) {
@@ -128,7 +125,7 @@ describe("POST /api/login - Login existing user", () => {
   });
 });
 
-describe("GET /api/me - Get​ ​the​ ​currently​ ​logged​ ​in​ ​user​ ​information", () => {
+describe.skip("GET /api/me - Get​ ​the​ ​currently​ ​logged​ ​in​ ​user​ ​information", () => {
   const endpoint = "/api/me";
 
   it("should not allow to go to /me when token is not included", async function(done) {
@@ -158,7 +155,7 @@ describe("GET /api/me - Get​ ​the​ ​currently​ ​logged​ ​in​ �
   });
 });
 
-describe("PUT /api/me/update-password - Update the password of the authenticated user", () => {
+describe.skip("PUT /api/me/update-password - Update the password of the authenticated user", () => {
   const endpoint = "/api/me";
 
   it("should not allow to update the password when the token is not included", async function(done) {
@@ -198,7 +195,7 @@ describe("PUT /api/me/update-password - Update the password of the authenticated
   });
 });
 
-describe("GET /api/most-liked - List​ ​users​ ​in​ ​a​ ​most​ ​liked​ ​to​ ​least​ ​liked", () => {
+describe.skip("GET /api/most-liked - List​ ​users​ ​in​ ​a​ ​most​ ​liked​ ​to​ ​least​ ​liked", () => {
   const endpoint = "/api/most-liked";
 
   it("should return HTTP OK (200)", done => {
@@ -220,7 +217,7 @@ describe("GET /api/most-liked - List​ ​users​ ​in​ ​a​ ​most​ 
   });
 });
 
-describe("GET /api/user/:id - Get​ ​the​ ​user​ with the specified ID", () => {
+describe.skip("GET /api/user/:id - Get​ ​the​ ​user​ with the specified ID", () => {
   const endpoint = "/api/user";
 
   it("should return OK (200) for an existing user", async function(done) {
@@ -241,7 +238,7 @@ describe("GET /api/user/:id - Get​ ​the​ ​user​ with the specified ID"
   });
 });
 
-describe("PUT /api/user/:id/like - Like a user", () => {
+describe.skip("PUT /api/user/:id/like - Like a user", () => {
   const endpoint = "/api/user";
 
   it("should not allow to like a user when the token is not included", async function(done) {
@@ -299,7 +296,7 @@ describe("PUT /api/user/:id/like - Like a user", () => {
   });
 });
 
-describe("PUT /api/user/:id/unlike - Unlike a user", () => {
+describe.skip("PUT /api/user/:id/unlike - Unlike a user", () => {
   const endpoint = "/api/user";
 
   it("should not allow to unlike a user when token is not included", async function(done) {

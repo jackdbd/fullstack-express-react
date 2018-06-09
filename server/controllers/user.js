@@ -1,9 +1,5 @@
 const { User, createUser, updateUser, deleteUser } = require("../models/user");
-const {
-  Relationship,
-  createRelationship,
-  deleteRelationship
-} = require("../models/relationship");
+const { Relationship, deleteRelationship } = require("../models/relationship");
 const HttpStatus = require("http-status-codes");
 const logger = require("../config/winston");
 
@@ -81,8 +77,16 @@ async function like(req, res) {
     category: "like"
   };
 
+  Relationship.create(obj)
+    .then(rel => {
+      console.log("THEN", rel);
+    })
+    .catch(err => {
+      console.log("err", err);
+    });
+
   try {
-    const rel = await createRelationship(obj);
+    // const rel = await createRelationship(obj);
     logger.debug(`Create relationship: ${id} likes ${doc.id}`);
   } catch (err) {
     return res.status(HttpStatus.BAD_REQUEST).json({ error: err.stack });

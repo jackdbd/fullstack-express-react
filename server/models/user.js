@@ -5,7 +5,7 @@ const logger = require("../config/winston");
 
 const name = "User";
 const collection = "users";
-const UserSchema = new mongoose.Schema({
+const schema = new mongoose.Schema({
   _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
   username: {
     type: String,
@@ -43,7 +43,7 @@ const UserSchema = new mongoose.Schema({
   In document middlewares, `this` refers to the BSON document stored in MongoDB.
   http://mongoosejs.com/docs/middleware.html
 */
-UserSchema.pre("save", function(next) {
+schema.pre("save", function(next) {
   const doc = this;
   const SALT_ROUNDS = 10;
   bcrypt.genSalt(SALT_ROUNDS, (err, salt) => {
@@ -61,7 +61,7 @@ UserSchema.pre("save", function(next) {
   });
 });
 
-UserSchema.statics.getUserById = async function(id) {
+schema.statics.getUserById = async function(id) {
   // if (!mongoose.Types.ObjectId.isValid(id)) throw new Error()
   let user;
   try {
@@ -76,7 +76,7 @@ UserSchema.statics.getUserById = async function(id) {
   }
 };
 
-UserSchema.statics.getUserByUsername = async function(username) {
+schema.statics.getUserByUsername = async function(username) {
   let user;
   try {
     user = await User.findOne({ username });
@@ -90,7 +90,7 @@ UserSchema.statics.getUserByUsername = async function(username) {
   }
 };
 
-UserSchema.statics.getUserByEmail = async function(email) {
+schema.statics.getUserByEmail = async function(email) {
   let user;
   try {
     user = await User.findOne({ email });
@@ -104,7 +104,7 @@ UserSchema.statics.getUserByEmail = async function(email) {
   }
 };
 
-UserSchema.statics.getUserByCredentials = async function(username, password) {
+schema.statics.getUserByCredentials = async function(username, password) {
   let user;
   try {
     user = await User.getUserByUsername(username);
@@ -125,7 +125,7 @@ UserSchema.statics.getUserByCredentials = async function(username, password) {
   }
 };
 
-UserSchema.statics.comparePasswordWithHash = async function(password, hash) {
+schema.statics.comparePasswordWithHash = async function(password, hash) {
   try {
     const isMatch = await bcrypt.compare(password, hash);
     logger.debug(
@@ -137,7 +137,7 @@ UserSchema.statics.comparePasswordWithHash = async function(password, hash) {
   }
 };
 
-UserSchema.methods.generateAuthToken = async function() {
+schema.methods.generateAuthToken = async function() {
   const user = this;
   const payload = { _id: user._id.toHexString(), access: "auth" };
   const secret = process.env.JWT_SECRET;
@@ -152,7 +152,7 @@ UserSchema.methods.generateAuthToken = async function() {
   }
 };
 
-const User = mongoose.model(name, UserSchema, collection);
+const User = mongoose.model(name, schema, collection);
 
 async function createUser(obj) {
   try {
@@ -190,10 +190,19 @@ async function deleteUser(id) {
   }
 }
 
+async function deleteUserIfAny(username) {
+  const user = await User.getUserByUsername(username);
+  if (user) {
+    const deletedUser = await deleteUser(user._id);
+    logger.debug("deleted user:", deletedUser);
+  }
+}
+
 module.exports = {
   User,
   createUser,
   readUser,
   updateUser,
-  deleteUser
+  deleteUser,
+  deleteUserIfAny
 };
