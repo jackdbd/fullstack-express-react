@@ -3,11 +3,16 @@ const logger = require("../config/winston");
 const { User } = require("./user");
 
 function isValidUser(userId) {
+  logger.warn(`isValidUser ${userId}`);
   return new Promise((resolve, reject) => {
     User.findById(userId)
       .then(user => {
-        logger.debug(`Existing user: ${user.id}`);
-        resolve(true);
+        if (!user) {
+          throw new Error("Non-existing user");
+        } else {
+          logger.debug(`Existing user: ${user.id}`);
+          resolve(true);
+        }
       })
       .catch(err => {
         reject(err);
@@ -17,11 +22,27 @@ function isValidUser(userId) {
 
 function areSourceAndDestinationDifferent() {
   const doc = this;
-  if (doc.source.toString() !== doc.destination.toString()) {
-    return true;
-  } else {
-    return false;
-  }
+  logger.warn("areSourceAndDestinationDifferent");
+  const promise = doc
+    .populate("source", ["id"])
+    .populate("destination", ["id"])
+    .execPopulate();
+
+  // we need the return value of this promise
+  return promise
+    .then(relationship => {
+      const src = relationship.source;
+      const dest = relationship.destination;
+      logger.debug(src.id, dest.id, src.id === dest.id);
+      if (src.id === dest.id) {
+        throw new Error("`source` and `destination` must be different");
+      } else {
+        return true;
+      }
+    })
+    .catch(err => {
+      throw err;
+    });
 }
 
 function hasNoRelationship() {
@@ -54,12 +75,13 @@ function isValidCategory(word) {
 const manyValidators = [
   {
     validator: areSourceAndDestinationDifferent,
-    msg: "`source` and `destination` must be different"
+    message: "`source` and `destination` must be different"
   },
-  { validator: isValidUser, msg: "Invalid user" },
+  { validator: isValidUser, message: "Invalid user" },
   {
     validator: hasNoRelationship,
-    msg: "There is already a relationship between `source` and `destination`"
+    message:
+      "There is already a relationship between `source` and `destination`"
   }
 ];
 
@@ -101,9 +123,12 @@ const Relationship = mongoose.model(name, schema, collection);
   Note: findAndUpdate does NOT execute any hooks (e.g. "save") or validation
   before making the change in the database. That's what we want here, because
   otherwise the user's password would be re-hashed in the User's "save" hook.
+
+  TODO: refactor. Improve readability.
 */
 schema.pre("save", function(next) {
   const doc = this;
+  logger.debug("relationship.save (PRE hook)");
   const promise = doc
     .populate("source", ["relationships"])
     .populate("destination", ["numLikes"])
@@ -143,9 +168,42 @@ schema.pre("save", function(next) {
 });
 
 /**
- * Delete a relationships identified by its id.
+ * Update users after a relationship document is removed.
  *
- * We need to take care of two model instances:
+ * Note that by design the Mongoose's middleware hook for remove is not fired
+ * for Model.remove, only for ModelDocument.remove.
+ * http://mongoosejs.com/docs/middleware.html
+ */
+schema.post("remove", function(doc) {
+  // const doc = this;
+  logger.debug("relationship.remove (POST hook)");
+  return User.findById(doc.source)
+    .then(user => {
+      const relationships = user.relationships.filter(
+        r => r.toString() !== doc.destination.toString()
+      );
+      logger.debug("User before update", user.relationships);
+      return User.findByIdAndUpdate(
+        user.id,
+        { $set: { relationships } },
+        { new: true }
+      )
+        .then(userNew => {
+          logger.debug("User after update", userNew.relationships);
+        })
+        .catch(err => {
+          throw err;
+        });
+    })
+    .catch(err => {
+      throw err;
+    });
+});
+
+/**
+ * Delete a relationship identified by its id and update the users.
+ *
+ * We need to do these things:
  * 1. find the Relationship by its id and remove it from the "relationships"
  *    collection
  * 2. find the User who is the "source" of this Relationship and remove this
@@ -154,30 +212,22 @@ schema.pre("save", function(next) {
  *
  * @param {String} id
  */
-async function deleteRelationship(id) {
+async function deleteRelationshipAndUpdateUsers(id) {
   let doc;
   try {
-    logger.debug(`Delete relationship ${id}`);
-    doc = await Relationship.findByIdAndRemove({ _id: id });
+    doc = await Relationship.findById(id);
   } catch (err) {
     throw err;
   }
-  const user1 = await User.findById(doc.source);
-  const relationships = user1.relationships.filter(
-    r => r.toString() !== doc.destination.toString()
-  );
-  const user = await User.findByIdAndUpdate(
-    user1.id,
-    { $set: { relationships } },
-    { new: true }
-  );
-  logger.debug(
-    `user ${user.id} has now these relationships: ${user.relationships}`
-  );
-  return doc;
+  try {
+    const docRemoved = await doc.remove();
+    return docRemoved;
+  } catch (err) {
+    throw err;
+  }
 }
 
 module.exports = {
   Relationship,
-  deleteRelationship
+  deleteRelationshipAndUpdateUsers
 };

@@ -1,9 +1,12 @@
 const logger = require("../config/winston");
 const { User } = require("./user");
-const { Relationship } = require("./relationship");
+const {
+  Relationship,
+  deleteRelationshipAndUpdateUsers
+} = require("./relationship");
 
 // turn off logging with winston during the tests
-// logger.transports["consoleLogger"].silent = true;
+logger.transports["consoleLogger"].silent = true;
 
 beforeEach(async function() {
   console.log("Clear relationships and users collections in DB");
@@ -83,5 +86,31 @@ describe("Create Relationship", () => {
       expect(err.stack).toContain("ValidationError");
       done();
     }
+  });
+});
+
+describe("Delete Relationship", () => {
+  it("should be possible to delete a relationship by id", async function(done) {
+    const obj = await init();
+    const rel = await Relationship.create(obj);
+    const docsBefore = await Relationship.find({});
+    expect(docsBefore).toHaveLength(1);
+    await Relationship.findByIdAndRemove(rel.id);
+    const docsAfter = await Relationship.find({});
+    expect(docsAfter).toHaveLength(0);
+    done();
+  });
+
+  it("should be possible to delete a relationship by id and update users", async function(done) {
+    const obj = await init();
+    const rel = await Relationship.create(obj);
+    const docsBefore = await Relationship.find({});
+    expect(docsBefore).toHaveLength(1);
+    const doc = await deleteRelationshipAndUpdateUsers(rel.id);
+    const docsAfter = await Relationship.find({});
+    expect(docsAfter).toHaveLength(0);
+    const user = await User.findById(doc.source);
+    expect(user.relationships).toHaveLength(0);
+    done();
   });
 });
