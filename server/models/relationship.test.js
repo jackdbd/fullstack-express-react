@@ -1,6 +1,4 @@
 require("dotenv").load();
-const request = require("supertest");
-// const HttpStatus = require("http-status-codes");
 const logger = require("../config/winston");
 const mongoose = require("mongoose");
 const { User, deleteUserIfAny } = require("./user");

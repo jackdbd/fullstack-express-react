@@ -14,7 +14,7 @@
     "lint": "prettier --write '**/*.{js,jsx}'",
     "crud": "node scripts/crud.js",
     "fake": "node scripts/fake.js",
-    "test": "jest --detectOpenHandles",
+    "test": "jest --detectOpenHandles --runInBand",
     "test:watch": "jest --watch",
     "ci": "jest --detectOpenHandles --runInBand && cd frontend && yarn add react-scripts && yarn run test",
     "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix frontend && npm run build --prefix frontend"
