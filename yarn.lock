@@ -2670,6 +2670,10 @@ mongodb@3.0.8:
   dependencies:
     mongodb-core "3.0.8"
 
+mongoose-beautiful-unique-validation@^7.1.1:
+  version "7.1.1"
+  resolved "https://registry.yarnpkg.com/mongoose-beautiful-unique-validation/-/mongoose-beautiful-unique-validation-7.1.1.tgz#50eaf88e395f9b194cd29ad76913cd9ebd515653"
+
 mongoose-dummy@1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/mongoose-dummy/-/mongoose-dummy-1.0.5.tgz#2196682f6ffcbfd3a76678b239318a9e8c9276f4"

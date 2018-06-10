@@ -14,9 +14,10 @@
     "lint": "prettier --write '**/*.{js,jsx}'",
     "crud": "node scripts/crud.js",
     "fake": "node scripts/fake.js",
-    "test": "jest --detectOpenHandles --runInBand",
+    "test": "jest --runInBand --forceExit",
+    "test1": "jest --detectOpenHandles",
     "test:watch": "jest --watch",
-    "ci": "jest --detectOpenHandles --runInBand && cd frontend && yarn add react-scripts && yarn run test",
+    "ci": "jest --runInBand --forceExit && cd frontend && yarn add react-scripts && yarn run test",
     "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix frontend && npm run build --prefix frontend"
   },
   "jest": {
@@ -49,6 +50,7 @@
     "http-status-codes": "^1.3.0",
     "jsonwebtoken": "^8.2.1",
     "mongoose": "^5.1.2",
+    "mongoose-beautiful-unique-validation": "^7.1.1",
     "morgan": "^1.9.0",
     "passport": "^0.4.0",
     "passport-google-oauth20": "^1.0.0",

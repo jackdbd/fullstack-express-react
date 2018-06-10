@@ -1,6 +1,7 @@
+const beautifyUnique = require("mongoose-beautiful-unique-validation");
 const bcrypt = require("bcryptjs");
-const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
+const mongoose = require("../db");
 const logger = require("../config/winston");
 
 const name = "User";
@@ -10,18 +11,17 @@ const schema = new mongoose.Schema({
   username: {
     type: String,
     required: true,
-    unique: true,
-    index: true
+    unique: "Two users cannot share the same username ({VALUE})"
   },
   email: {
     type: String,
     required: true,
-    unique: true
+    unique: "Two users cannot share the same email ({VALUE})"
   },
   password: {
     type: String,
     required: true,
-    unique: true,
+    unique: "Two users cannot share the same password ({VALUE})",
     minlength: 8
   },
   numLikes: {
@@ -152,7 +152,14 @@ schema.methods.generateAuthToken = async function() {
   }
 };
 
+/*
+  Use mongoose-beautiful-unique-validation to turn MongoDB duplicate errors into
+  regular Mongoose validation errors.
+*/
+schema.plugin(beautifyUnique);
 const User = mongoose.model(name, schema, collection);
+
+// TODO: remove these CRUD functions and use the Mongoose API
 
 async function createUser(obj) {
   try {
