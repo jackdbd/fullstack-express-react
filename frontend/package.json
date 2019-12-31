@@ -27,7 +27,7 @@
     "react-router-dom": "4.2.2",
     "react-scripts": "1.1.4",
     "react-spinkit": "3.0.0",
-    "redux": "4.0.0",
+    "redux": "4.0.5",
     "redux-devtools-extension": "2.13.2",
     "redux-form": "^7.3.0",
     "redux-logger": "3.0.6",
