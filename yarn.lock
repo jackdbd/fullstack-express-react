@@ -2839,7 +2839,7 @@ mongodb-core@3.0.8:
     bson "~1.0.4"
     require_optional "^1.0.1"
 
-mongodb-memory-server@^1.8.0:
+mongodb-memory-server@1.8.0:
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/mongodb-memory-server/-/mongodb-memory-server-1.8.0.tgz#8dbafcf1192b9d3543afa562fbd5160b2425883b"
   dependencies:
