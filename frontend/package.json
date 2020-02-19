@@ -36,7 +36,7 @@
     "styled-components": "3.3.0"
   },
   "devDependencies": {
-    "codecov": "3.0.2",
+    "codecov": "3.6.5",
     "concurrently": "3.5.1",
     "enzyme": "3.3.0",
     "enzyme-adapter-react-16": "1.1.1",
